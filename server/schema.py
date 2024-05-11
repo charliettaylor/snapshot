@@ -12,13 +12,13 @@ class User(DbModel):
     is_active: bool
 
 
-class Registrations(DbModel):
+class Registration(DbModel):
     phone: int
     username: str
     state: int
 
 
-class Prompts(DbModel):
+class Prompt(DbModel):
     id: int
     prompt: str
     week: int

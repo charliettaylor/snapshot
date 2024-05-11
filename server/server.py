@@ -5,11 +5,10 @@ from config import settings
 
 from sqlalchemy.orm import Session
 
-from server.database import SessionLocal, engine
+from database import SessionLocal, engine
 
-from . import models, schema
-
-print(message.sid)
+import models
+import schema
 
 app = FastAPI()
 

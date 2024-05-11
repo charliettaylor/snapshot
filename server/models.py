@@ -13,7 +13,7 @@ class User(DbModel):
 
 
 class Registrations(DbModel):
-    id: int
+    phone: str
     username: str
     state: int
 

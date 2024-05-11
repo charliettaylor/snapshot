@@ -9,6 +9,7 @@ class User(Base):
     username = Column(String, primary_key=True)
     phone = Column(String, unique=True)
     active = Column(Boolean, default=True)
+    hash = Column(String, nullable=False)
 
 
 class Registration(Base):

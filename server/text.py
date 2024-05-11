@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from server import get_db
+from main import get_db
 
 class TextInterface(ABC):
     def __init__(self):

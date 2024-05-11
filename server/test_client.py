@@ -7,10 +7,11 @@ class TestClient(TextInterface):
 
     @override
     def send_message(self, to: str, text: str):
-        print(to, "{}: text".format(settings.twilio_phone_number))
+        print(to, "{}: {}".format(settings.twilio_phone_number, text))
 
     @override
     def receive_message(self, from_: str, text: str):
         print(from_, text)
+        self.handle_message(from_, text)
 
 

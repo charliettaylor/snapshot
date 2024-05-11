@@ -29,7 +29,7 @@ def get_registration(db: Session, phone: str) -> models.Registration | None:
     )
 
 
-def create_registration(db: Session, reg: schema.Registrations) -> models.Registration:
+def create_registration(db: Session, reg: schema.Registration) -> models.Registration:
     db_reg = models.Registration(phone=reg.phone, state=0)
     db.add(db_reg)
     db.commit()

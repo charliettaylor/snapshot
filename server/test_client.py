@@ -14,4 +14,11 @@ class TestClient(TextInterface):
         print(from_, text)
         self.handle_message(from_, text)
 
+if __name__ == "__main__":
+    client = TestClient()
+
+    while True:
+        text = input()
+        client.receive_message("9517518340", text)
+
 

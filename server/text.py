@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from database import get_db
+from crud import *
 
 HOW_TO_START = "Snapshot: Text START to play."
 ENTER_USERNAME = "Snapshot: Text STOP to unsubscribe. To finish registering, please enter your username:"
@@ -32,6 +33,10 @@ class TextInterface(ABC):
         pass
 
     def handle_message(self, from_: str, text: str):
+
+        if get_registration(db, from_) is None:
+            create_registration(db, from_)
+
         if contains(text, STOP_KEYWORDS):
             self.send_message(from_, UNSUBSCRIBED)
 

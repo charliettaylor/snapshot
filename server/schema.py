@@ -8,7 +8,7 @@ class DbModel(BaseModel):
 class User(DbModel):
     username: str
     phone: str
-    is_active: bool
+    active: bool
 
 
 class Registration(DbModel):

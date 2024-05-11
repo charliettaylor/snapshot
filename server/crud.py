@@ -30,7 +30,7 @@ def get_reg(db: Session, phone: str) -> models.Registration | None:
     )
 
 
-def create_reg(db: Session, phone: str ) -> models.Registration:
+def create_reg(db: Session, phone: str) -> models.Registration:
     db_reg = models.Registration(phone=phone, state=0)
     db.add(db_reg)
     db.commit()
@@ -48,8 +48,8 @@ def update_reg(db: Session, reg: schema.Registration) -> models.Registration | N
     if db_reg is None:
         return None
 
-    db_reg.username = reg.username
-    db_reg.state = reg.state
+    db_reg.username = reg.username  # type: ignore
+    db_reg.state = reg.state  # type: ignore
     db.commit()
 
     return db_reg

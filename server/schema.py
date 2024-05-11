@@ -9,6 +9,7 @@ class User(DbModel):
     username: str
     phone: str
     active: bool
+    hash: str
 
 
 class Registration(DbModel):

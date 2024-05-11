@@ -1,6 +1,7 @@
 CREATE TABLE users (
     username TEXT PRIMARY KEY,
     phone TEXT NOT NULL UNIQUE,
+    hash TEXT NOT NULL,
     -- bool
     active INTEGER NOT NULL
 );

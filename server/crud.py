@@ -17,12 +17,27 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]
 
 
 def create_user(db: Session, user: schema.User) -> models.User:
-    db_user = models.User(username=user.username, phone=user.phone, active=True)
+    db_user = models.User(username=user.username, phone=user.phone, active=True, hash=user.hash)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
+def update_user(db: Session, user: schema.User) -> models.User | None:
+    db_user = (
+        db.query(models.User)
+        .filter(models.User.phone == user.phone)
+        .first()
+    )
+
+    if db_user is None:
+        return None
+
+    db_user.username = user.username
+    db_user.active = user.active
+    db.commit()
+
+    return db_user
 
 def get_reg(db: Session, phone: str) -> models.Registration | None:
     return (

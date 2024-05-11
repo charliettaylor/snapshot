@@ -13,7 +13,7 @@ class SmsClient(TextInterface):
 
     @override
     def send_message(self, to: str, text: str):
-        _ = self.client.messages.create(to=to, from_=settings.twilio_phone_number, body=text)
+        self.client.messages.create(to=to, from_=settings.twilio_phone_number, body=text)
 
     @override
     def receive_message(self, from_: str, text: str):

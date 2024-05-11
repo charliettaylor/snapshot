@@ -14,7 +14,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 @app.get("/")
-def read_root():
+def read_root(db: Session = Depends(get_db)):
     db = get_db()
     user = None
     if isinstance(db, Session):

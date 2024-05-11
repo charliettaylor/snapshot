@@ -1,3 +1,4 @@
+import stat
 from typing import List
 import models, schema
 from sqlalchemy.orm import Session
@@ -23,15 +24,35 @@ def create_user(db: Session, user: schema.User) -> models.User:
     return db_user
 
 
-def get_registration(db: Session, phone: str) -> models.Registration | None:
+def get_reg(db: Session, phone: str) -> models.Registration | None:
     return (
         db.query(models.Registration).filter(models.Registration.phone == phone).first()
     )
 
 
-def create_registration(db: Session, reg: schema.Registration) -> models.Registration:
+def create_reg(db: Session, reg: schema.Registration) -> models.Registration:
     db_reg = models.Registration(phone=reg.phone, state=0)
     db.add(db_reg)
     db.commit()
     db.refresh(db_reg)
     return db_reg
+
+
+def update_reg(db: Session, reg: schema.Registration) -> models.Registration | None:
+    db_reg = (
+        db.query(models.Registration)
+        .filter(models.Registration.phone == reg.phone)
+        .first()
+    )
+
+    if db_reg is None:
+        return None
+
+    new = models.Registration(
+        phone=db_reg.phone, username=reg.username, state=reg.state
+    )
+    db.add(new)
+    db.commit()
+    db.refresh(new)
+
+    return new

@@ -15,3 +15,13 @@ main {
 .register {
     width: 60%;
 }
+
+footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+}
+
+footer > small {
+    margin: 1rem;
+}

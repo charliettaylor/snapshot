@@ -1,25 +1,28 @@
-from pydantic import BaseModel
+from sqlalchemy import Boolean, Column, Integer, String
+
+from database import Base
 
 
-class DbModel(BaseModel):
-    class Config:
-        from_attributes = True
+class User(Base):
+    __tablename__ = "users"
+
+    username = Column(String, primary_key=True)
+    phone = Column(String, unique=True)
+    active = Column(Boolean, default=True)
 
 
-class User(DbModel):
-    username: str
-    phone: str
-    is_active: bool
+class Registration(Base):
+    __tablename__ = "registrations"
+
+    phone = Column(String, primary_key=True)
+    username = Column(String)
+    state = Column(Integer)
 
 
-class Registrations(DbModel):
-    phone: str
-    username: str
-    state: int
+class Prompt(Base):
+    __tablename__ = "prompts"
 
-
-class Prompts(DbModel):
-    id: int
-    prompt: str
-    week: int
-    year: int
+    id = Column(Integer, primary_key=True)
+    prompt = Column(String, nullable=False)
+    week = Column(Integer, nullable=False)
+    prompt = Column(Integer, nullable=False)

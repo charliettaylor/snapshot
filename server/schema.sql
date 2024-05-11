@@ -6,7 +6,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE registrations (
-    id INTEGER PRIMARY KEY,
+    phone TEXT PRIMARY KEY,
     username TEXT NULL,
     -- 0 start, 1 username, 2 retry username, 3 complete
     state INTEGER NOT NULL

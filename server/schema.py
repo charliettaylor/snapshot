@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class DbModel(BaseModel):
     class Config:
         from_attributes = True
@@ -14,7 +13,7 @@ class User(DbModel):
 
 class Registration(DbModel):
     phone: str
-    username: str
+    username: str | None
     state: int
 
 

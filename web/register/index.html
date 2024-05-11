@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
-    <title>Snapshot!</title>
+    <title>Register</title>
 </head>
 
 <body>
@@ -20,6 +20,14 @@
             </div>
         </div>
     </header>
+    <main>
+        <form action="/api/register" class="register">
+            <input type="text" name="username" placeholder="Your username" aria-label="First name" required="">
+            <input type="tel" name="phone" placeholder="123-456-7890" aria-label="Telephone" autocomplete="tel"
+                required="">
+            <button type="submit">Register</button>
+        </form>
+    </main>
 </body>
 
 </html>

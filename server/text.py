@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 from main import get_db
 
+HOW_TO_START = "Snapshot: Text START to subscribe."
+
 class TextInterface(ABC):
     def __init__(self):
         self.db = get_db()

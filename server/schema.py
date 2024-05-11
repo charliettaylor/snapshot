@@ -1,8 +1,18 @@
 from pydantic import BaseModel
+from typing import List
+
 
 class DbModel(BaseModel):
     class Config:
         from_attributes = True
+
+
+class Pic(DbModel):
+    id: int
+    data: bytes
+    format: str
+    prompt: int
+    user: str
 
 
 class User(DbModel):
@@ -10,6 +20,8 @@ class User(DbModel):
     phone: str
     active: bool
     hash: str
+
+    pics: List[Pic] | None
 
 
 class Registration(DbModel):
@@ -23,3 +35,5 @@ class Prompt(DbModel):
     prompt: str
     week: int
     year: int
+
+    pics: List[Pic] | None

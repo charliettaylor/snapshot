@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import BLOB, Boolean, Column, ForeignKey, Integer, String, true
+from sqlalchemy.orm import relationship
 
 from database import Base
 
@@ -9,7 +10,9 @@ class User(Base):
     username = Column(String, primary_key=True)
     phone = Column(String, unique=True)
     active = Column(Boolean, default=True)
-    hash = Column(String, nullable=False)
+    hash = Column(String, unique=True)
+
+    pics = relationship("Pic", back_populates="uploader")
 
 
 class Registration(Base):
@@ -26,4 +29,19 @@ class Prompt(Base):
     id = Column(Integer, primary_key=True)
     prompt = Column(String, nullable=False)
     week = Column(Integer, nullable=False)
-    prompt = Column(Integer, nullable=False)
+    year = Column(Integer, nullable=False)
+
+    pics = relationship("Pic", back_populates="parent")
+
+
+class Pic(Base):
+    __tablename__ = "pics"
+
+    id = Column(Integer, primary_key=True)
+    data = Column(BLOB)
+    format = Column(String)
+    prompt = Column(Integer, ForeignKey("prompts.id"))
+    user = Column(String, ForeignKey("users.username"))
+
+    parent = relationship("Prompt", back_populates="pics")
+    uploader = relationship("User", back_populates="pics")

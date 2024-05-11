@@ -1,7 +1,10 @@
-import stat
+import datetime
 from typing import List
+
+from click import prompt
 import models, schema
 from sqlalchemy.orm import Session
+from fastapi import UploadFile
 
 
 def get_user(db: Session, username: str) -> models.User | None:
@@ -10,6 +13,10 @@ def get_user(db: Session, username: str) -> models.User | None:
 
 def get_user_by_phone(db: Session, phone: str) -> models.User | None:
     return db.query(models.User).filter(models.User.phone == phone).first()
+
+
+def get_user_by_hash(db: Session, hash: str) -> models.User | None:
+    return db.query(models.User).filter(models.User.hash == hash).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]:
@@ -68,3 +75,18 @@ def update_reg(db: Session, reg: schema.Registration) -> models.Registration | N
     db.commit()
 
     return db_reg
+
+
+def get_current_prompt(db: Session) -> models.Prompt | None:
+    week, year = get_week_year()
+    return db.query(models.Prompt).filter_by(week=week, year=year).first()
+
+
+def create_pic(db: Session, username: str, file: UploadFile):
+    p = get_current_prompt(db)
+    pic = models.Pic(data=file.file, prompt=file.content_type, user=username, prompt=p)
+
+
+def get_week_year() -> tuple[int, int]:
+    year, week, _ = datetime.date.today().isocalendar()
+    return week, year

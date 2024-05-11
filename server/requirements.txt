@@ -1,0 +1,5 @@
+pydantic
+fastapi
+pydantic_settings
+twilio
+sqlalchemy

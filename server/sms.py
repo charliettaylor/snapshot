@@ -16,11 +16,3 @@ class SmsClient(TextInterface):
     @override
     def receive_message(self, from_: str, text: str):
         print(from_, text)
-
-if __name__ == "__main__":
-    client = SmsClient()
-
-    # client.send_message("+19517518340", "Tester McTesty")
-
-    while True:
-        client.receive_message("+19517518340", "test")

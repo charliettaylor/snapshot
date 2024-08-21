@@ -3,35 +3,45 @@ from typing import Generator
 from fastapi import Depends, FastAPI, UploadFile, Form
 from twilio.twiml.messaging_response import MessagingResponse
 
-from config import settings
+from fastapi import Depends, FastAPI, UploadFile
+from twilio.twiml.messaging_response import MessagingResponse
+
+from fastapi import Depends, FastAPI, HTTPException, UploadFile
+from fastapi.responses import HTMLResponse
 import crud
 
 from sqlalchemy.orm import Session
 
 from database import SessionLocal, engine, get_db
 from sms import SmsClient
+from database import engine, get_db
 
-import schema, models
+import models
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 twilio_client = SmsClient()
 
-@app.get("/")
-def read_root(db: Session = Depends(get_db)):
-    user = None
-    if isinstance(db, Session):
-        user = db.query(schema.User).first()
-
-    return user
+@app.get("/", response_class=HTMLResponse)
+def read_root():
+        return """
+    <html>
+        <head>
+            <title>Snapshot</title>
+        </head>
+        <body>
+            <h1>Snapshot 📸</h1>
+        </body>
+    </html>
+    """
 
 @app.post('/upload/{user_hash}')
 def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
     user = crud.get_user_by_hash(db, user_hash)
 
     if user is None:
-        return None
+        raise HTTPException(status_code=400, detail="Invalid user")
 
     return crud.create_pic(db, user.username, file)
 

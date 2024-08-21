@@ -84,7 +84,7 @@ def get_current_prompt(db: Session) -> models.Prompt | None:
 
 def create_pic(db: Session, username: str, file: UploadFile):
     p = get_current_prompt(db)
-    pic = models.Pic(data=file.file, prompt=file.content_type, user=username, prompt=p)
+    pic = models.Pic(data=file.file, format=file.content_type, user=username, prompt=p)
 
 
 def get_week_year() -> tuple[int, int]:

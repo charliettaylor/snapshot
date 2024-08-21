@@ -1,5 +1,6 @@
 from sqlalchemy import BLOB, Boolean, Column, ForeignKey, Integer, String, true
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
+from typing import Optional
 
 from database import Base
 
@@ -12,7 +13,7 @@ class User(Base):
     active = Column(Boolean, default=True)
     hash = Column(String, unique=True)
 
-    pics = relationship("Pic", back_populates="uploader")
+    pics: Mapped[Optional["Pic"]] = relationship("Pic", back_populates="uploader")
 
 
 class Registration(Base):
@@ -31,7 +32,7 @@ class Prompt(Base):
     week = Column(Integer, nullable=False)
     year = Column(Integer, nullable=False)
 
-    pics = relationship("Pic", back_populates="parent")
+    pics: Mapped[Optional["Pic"]] = relationship("Pic", back_populates="parent")
 
 
 class Pic(Base):

@@ -70,7 +70,7 @@ class TextInterface(ABC):
         elif reg.state == 2 and contains(text, POSITIVE_KEYWORDS):
             user_hash = super_good_hash(reg.username)
             print(user_hash)
-            create_user(self.db, User(phone=from_, username=reg.username, active=True, hash=super_good_hash(reg.username)))
+            create_user(self.db, User(phone=from_, username=reg.username, active=True, hash=super_good_hash(reg.username), pics=None))
             update_reg(self.db, Registration(phone=from_, username=reg.username, state=3))
             self.send_message(from_, REGISTRATION_SUCCESSFUL.format(reg.username))
 

@@ -46,10 +46,10 @@ def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
     return crud.create_pic(db, user.username, file)
 
 @app.post("/sms")
-def receive_message(from_: str = Form(...), body: str = Form(...)):
+def receive_message(From: str = Form(...), Body: str = Form(...)):
     print(from_, body)
     response = MessagingResponse() 
-    msg = response.message(f"Hi {from_}, you said: {body}")
-    twilio_client.receive_message(from_, body)
+    msg = response.message(f"Hi {From}, you said: {Body}")
+    twilio_client.receive_message(From, Body)
     return Response(content=str(response), media_type="application/xml")
     # twilio_client.send_message(from_, "Received message {}".format(body))

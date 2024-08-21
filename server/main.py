@@ -47,6 +47,7 @@ def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
 
 @app.post("/sms")
 def receive_message(from_: str = Form(...), body: str = Form(...)):
+    print(from_, body)
     response = MessagingResponse() 
     msg = response.message(f"Hi {from_}, you said: {body}")
     twilio_client.receive_message(from_, body)

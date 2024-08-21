@@ -68,10 +68,10 @@ class TextInterface(ABC):
             self.send_message(from_, CONFIRM_USERNAME.format(text))
 
         elif reg.state == 2 and contains(text, POSITIVE_KEYWORDS):
-            update_reg(self.db, Registration(phone=from_, username=reg.username, state=3))
             user_hash = super_good_hash(reg.username)
             print(user_hash)
             create_user(self.db, User(phone=from_, username=reg.username, active=True, hash=super_good_hash(reg.username)))
+            update_reg(self.db, Registration(phone=from_, username=reg.username, state=3))
             self.send_message(from_, REGISTRATION_SUCCESSFUL.format(reg.username))
 
         elif reg.state == 2 and contains(text, NEGATIVE_KEYWORDS):

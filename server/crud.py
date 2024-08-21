@@ -82,9 +82,16 @@ def get_current_prompt(db: Session) -> models.Prompt | None:
     return db.query(models.Prompt).filter_by(week=week, year=year).first()
 
 
-def create_pic(db: Session, username: str, file: UploadFile):
+def create_pic(db: Session, username: str, file: UploadFile) -> models.Pic:
     p = get_current_prompt(db)
-    pic = models.Pic(data=file.file, format=file.content_type, user=username, prompt=p)
+    fileBytes = file.file.read()
+    pic = models.Pic(data=fileBytes, format=file.content_type, user=username, prompt=p)
+    
+    db.add(pic)
+    db.commit()
+    db.refresh(pic)
+
+    return pic
 
 
 def get_week_year() -> tuple[int, int]:

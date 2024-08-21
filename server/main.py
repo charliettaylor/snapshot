@@ -1,6 +1,6 @@
 from typing import Generator
 
-from fastapi import Depends, FastAPI, UploadFile, Form
+from fastapi import Depends, FastAPI, UploadFile, Form, Response
 from twilio.twiml.messaging_response import MessagingResponse
 
 from fastapi import Depends, FastAPI, UploadFile
@@ -47,5 +47,8 @@ def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
 
 @app.post("/sms")
 def receive_message(from_: str = Form(...), body: str = Form(...)):
+    response = MessagingResponse() 
+    msg = response.message(f"Hi {from_}, you said: {body}")
     twilio_client.receive_message(from_, body)
-    twilio_client.send_message(from_, "Received message {}".format(body))
+    return Response(content=str(response), media_type="application/xml")
+    # twilio_client.send_message(from_, "Received message {}".format(body))

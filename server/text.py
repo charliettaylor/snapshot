@@ -6,7 +6,7 @@ from schema import Registration, User
 from database import get_db
 from crud import *
 
-BASE_URL = "localhost:8000/u/"
+BASE_URL = "https://snapshot.lieber.men/u/"
 
 HOW_TO_START = "Snapshot: Text START to play."
 ENTER_USERNAME = "Snapshot: Text STOP to unsubscribe. To finish registering, please enter your username:"

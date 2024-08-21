@@ -4,8 +4,6 @@ from typing import override
 from config import settings
 from text import TextInterface
 
-twilio_client = Client(settings.twilio_account_sid, settings.twilio_auth_token)
-
 class SmsClient(TextInterface):
     def __init__(self):
         super().__init__()
@@ -19,4 +17,10 @@ class SmsClient(TextInterface):
     def receive_message(self, from_: str, text: str):
         print(from_, text)
 
+if __name__ == "__main__":
+    client = SmsClient()
 
+    # client.send_message("+19517518340", "Tester McTesty")
+
+    while True:
+        client.receive_message("+19517518340", "test")

@@ -53,7 +53,7 @@ class TextInterface(ABC):
 
         if contains(text, STOP_KEYWORDS):
             if user is not None:
-                update_user(self.db, User(phone=user.phone, username=user.username, active=False))
+                update_user(self.db, User(phone=user.phone, username=user.username, active=False, hash=user.hash))
             self.send_message(from_, UNSUBSCRIBED)
 
         elif reg.state == 0 and contains(text, START_KEYWORDS):

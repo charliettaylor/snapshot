@@ -9,6 +9,7 @@ from crud import *
 BASE_URL = "https://snapshot.lieber.men/u/"
 
 SNAPSHOT = "Snapshot 📸: "
+SNAPSHOT_MULTI_LINE = "Snapshot 📸"
 
 HOW_TO_START = SNAPSHOT + "Text START to play."
 ENTER_USERNAME = (
@@ -21,7 +22,7 @@ REGISTRATION_SUCCESSFUL = (
     SNAPSHOT + 'You\'ve successfully registered as "{}". Thanks! :)'
 )
 UNSUBSCRIBED = SNAPSHOT + "You've successfully unsubscribed. Text START to resubscribe."
-PROMPT = SNAPSHOT + "\n\n✨{prompt}✨\n\nSTOP to unsubscribe."
+PROMPT = SNAPSHOT_MULTI_LINE + "\n\n✨{prompt}✨\n\nSTOP to unsubscribe."
 
 STOP_KEYWORDS = ["STOP", "UNSUBSCRIBE", "OPTOUT"]
 START_KEYWORDS = ["START", "PLAY", "OPTIN", "SUBSCRIBE", "RESUBSCRIBE"]

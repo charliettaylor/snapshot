@@ -148,7 +148,8 @@ class TextInterface(ABC):
         pass
 
     def handle_admin_message(self, text: str):
-        prompt = " ".join(text.split(" ")[1:])
+        prompt_text = " ".join(text.split(" ")[1:])
+        crud.create_prompt(self.db, prompt_text)
         self.send_prompts(prompt)
 
     def send_prompts(self, prompt: str):

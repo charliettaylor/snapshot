@@ -15,9 +15,7 @@ CREATE TABLE registrations (
 
 CREATE TABLE prompts (
     id INTEGER PRIMARY KEY,
-    prompt TEXT NOT NULL,
-    week INTEGER NOT NULL,
-    year INTEGER NOT NULL
+    prompt TEXT NOT NULL
 );
 
 CREATE TABLE pics (

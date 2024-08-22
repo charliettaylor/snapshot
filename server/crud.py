@@ -78,8 +78,7 @@ def update_reg(db: Session, reg: schema.Registration) -> models.Registration | N
 
 
 def get_current_prompt(db: Session) -> models.Prompt | None:
-    week, year = get_week_year()
-    return db.query(models.Prompt).filter_by(week=week, year=year).first()
+    return db.query(models.Prompt).order_by(models.Prompt.id.desc()).first()
 
 
 def get_pic(db: Session, username: str | None = None, prompt: str | None = None):

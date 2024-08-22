@@ -108,9 +108,6 @@ class TextInterface(ABC):
                 from_, VIEW_SUBMISSIONS.format(self.generate_url(user.hash))
             )
 
-    def get_random_prompt(self):
-        pass
-
     def handle_admin_message(self, text: str):
         prompt_text = " ".join(text.split(" ")[1:])
         logger.info("handle_admin_message %s", prompt_text)
@@ -125,7 +122,7 @@ class TextInterface(ABC):
 
     def send_prompt(self, prompt_text: str, phone: str):
         logger.info("send_prompt %s %s", phone, prompt_text)
-        msg = PROMPT.format(prompt=prompt)
+        msg = PROMPT.format(prompt=prompt_text)
         self.send_message(phone, prompt_text)
 
     def generate_url(self, user_hash: str):

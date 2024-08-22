@@ -5,7 +5,6 @@ from text import TextInterface
 
 
 class TestClient(TextInterface):
-
     @override
     def send_message(self, to: str, text: str):
         print(to, "{}: {}".format(settings.twilio_phone_number, text))

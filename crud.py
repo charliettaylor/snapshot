@@ -25,7 +25,13 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[User]:
 
 
 def create_user(db: Session, phone: str, username: str) -> User:
-    user = User(username=username, phone=phone, active=True, hash=util.user_hash(username), pics=None)
+    user = User(
+        username=username,
+        phone=phone,
+        active=True,
+        hash=util.user_hash(username),
+        pics=None,
+    )
     db.add(user)
     db.commit()
     db.refresh(user)

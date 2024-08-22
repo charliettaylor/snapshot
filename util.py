@@ -1,6 +1,7 @@
 from config import settings
 import hashlib
 
+
 def contains(text: str, words: [str], ignore_case=True):
     for word in words:
         if word in text:
@@ -8,6 +9,7 @@ def contains(text: str, words: [str], ignore_case=True):
         if ignore_case and word.lower() in text.lower():
             return True
     return False
+
 
 def user_hash(username):
     combined_str = username + settings.hash_secret

@@ -60,16 +60,16 @@ def receive_message(
 
 
 @app.get("/{user_hash}")
-def images_page(user_hash: str, n: Optional[int] = None):
+def images_page(user_hash: str, n: Optional[int] = None, db: Session = Depends(get_db)):
     if n is None:
-        n = crud.get_current_prompt(self.db).id
+        n = crud.get_current_prompt(db).id
     if not crud.get_submission_status(user_hash, n):
         return HTTPException(status_code=401, detail="No submission for this prompt")
 
     pics = crud.get_pics_by_prompt(n)
     html_list = []
     for pic in pics:
-        html_list.append("<li>{}/li>".format(pic.id))
+        html_list.append('<li><img src="{}"></li>'.format(pic.url))
 
     return """
     <html>
@@ -89,8 +89,8 @@ def images_page(user_hash: str, n: Optional[int] = None):
 
 
 @app.get("/{user_hash}/history")
-def history_page(user_hash: str):
-    pics = crud.get_pics_by_hash(user_hash)
+def history_page(user_hash: str, db: Session = Depends(get_db)):
+    pics = crud.get_pics_by_hash(db, user_hash)
     html_list = []
     for pic in pics:
         html_list.append("<li>{}/li>".format(pic.id))

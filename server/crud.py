@@ -90,12 +90,11 @@ def get_pic(db: Session, username: str | None = None, prompt: str | None = None)
     )
 
 
-
 def create_pic(db: Session, username: str, file: UploadFile) -> models.Pic:
     p = get_current_prompt(db)
     if get_pic(db, username, p) is not None:
         return None
-    
+
     fileBytes = file.file.read()
     pic = models.Pic(data=fileBytes, format=file.content_type, user=username, prompt=p)
 

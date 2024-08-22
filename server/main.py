@@ -63,6 +63,7 @@ def receive_message(
 def images_page(user_hash: str, n: Optional[int] = None, db: Session = Depends(get_db)):
     if n is None:
         n = crud.get_current_prompt(db).id
+    print(db, user_hash, n)
     print(crud.get_submission_status(db, user_hash, n))
     if not crud.get_submission_status(db, user_hash, n):
         return HTTPException(status_code=401, detail="No submission for this prompt")

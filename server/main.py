@@ -93,7 +93,7 @@ def history_page(user_hash: str, db: Session = Depends(get_db)):
     for pic in pics:
         prompt = crud.get_prompt(db, pic.prompt)
         url = BASE_URL + "/{}?n={}".format(user_hash, prompt.id)
-        html_list.append('<li><a href="{}">{}</a></li>'.format(prompt.prompt, url))
+        html_list.append('<li><a href="{}">{}</a></li>'.format(url, prompt.prompt))
 
     return """
     <html>

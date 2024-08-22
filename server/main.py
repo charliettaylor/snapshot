@@ -66,7 +66,7 @@ def images_page(user_hash: str, n: Optional[int] = None, db: Session = Depends(g
     if not crud.get_submission_status(db, user_hash, n):
         return HTTPException(status_code=401, detail="No submission for this prompt")
 
-    pics = crud.get_pics_by_prompt(n)
+    pics = crud.get_pics_by_prompt(db, n)
     html_list = []
     for pic in pics:
         html_list.append('<li><img src="{}"></li>'.format(pic.url))

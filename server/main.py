@@ -55,13 +55,9 @@ def receive_message(
     MediaContentType0: Optional[str] = Form(None),
     MediaUrl0: Optional[str] = Form(None),
 ):
-    print("sms")
-    print(request)
-    print(From)
-    print(Body)
-    print(MediaContentType0)
-    print(MediaUrl0)
+    if MediaContentType == "image":
+        twilio.client.handle_image(From, MediaUrl0)
+    else:
+        twilio_client.handle_message(From, Body)
     response = MessagingResponse()
-    # twilio_client.handle_message(From, Body)
     return Response(content=str(response), media_type="application/xml")
-    # twilio_client.send_message(from_, "Received message {}".format(body))

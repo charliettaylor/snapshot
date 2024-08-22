@@ -109,12 +109,12 @@ def get_pics_by_prompt(db: Session, prompt_id: int) -> List[models.Pic]:
 
 
 def get_submission_status(db: Session, user_hash: str, prompt_id: int) -> bool:
-    user: models.User = (
-        db.query(models.User).filter(models.User.hash == user_hash).first()
-    )
+    user = get_user_by_hash(db, user_hash)
+    if user is None:
+        return False
     return (
         db.query(models.Pic)
-        .filter(models.Pic.user == user.username and models.Pic.id == prompt)
+        .filter(models.Pic.user == user.username and models.Pic.id == prompt_id)
         .first()
         is not None
     )

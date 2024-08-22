@@ -1,6 +1,8 @@
 from sqlalchemy import BLOB, Boolean, Column, ForeignKey, Integer, String, true
 from sqlalchemy.orm import relationship, Mapped
 from typing import Optional
+from pydantic import BaseModel
+
 
 from database import Base
 

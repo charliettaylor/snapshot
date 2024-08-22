@@ -7,17 +7,9 @@ from models import Registration, User
 from config import settings
 from crud import *
 from constants import *
+from util import *
 
 logger = logging.getLogger(__name__)
-
-def contains(text: str, words: [str], ignore_case=True):
-    for word in words:
-        if word in text:
-            return True
-        if ignore_case and word.lower() in text.lower():
-            return True
-    return False
-
 
 class TextInterface(ABC):
     def __init__(self):
@@ -33,20 +25,20 @@ class TextInterface(ABC):
 
     def handle_message(self, from_: str, text: str):
 
-        logger.info("handle_message", from_, text)
+        logger.info("handle_message %s %s", from_, text)
 
         if settings.admin_pass in text:
             self.handle_admin_message(text)
             return
 
         reg = get_reg(self.db, from_)
-        logger.debug("handle_message reg", vars(reg) if reg is not None else reg)
+        logger.debug("handle_message reg %s", vars(reg) if reg is not None else str(reg))
         if reg is None:
             logger.info("handle_message create_reg", from_)
             reg = create_reg(self.db, from_)
 
         user = get_user_by_phone(self.db, from_)
-        logger.debug("handle_message reg", vars(user) if user is not None else user)
+        logger.debug("handle_message reg %s", vars(user) if user is not None else str(user))
 
         if contains(text, STOP_KEYWORDS):
             if user is not None:
@@ -91,7 +83,7 @@ class TextInterface(ABC):
 
     def handle_image(self, from_: str, url: str):
 
-        logger.info("handle_image", from_, url)
+        logger.info("handle_image %s %s", from_, url)
 
         user = get_user_by_phone(self.db, from_)
 
@@ -121,18 +113,18 @@ class TextInterface(ABC):
 
     def handle_admin_message(self, text: str):
         prompt_text = " ".join(text.split(" ")[1:])
-        logger.info("handle_admin_message", prompt_text)
+        logger.info("handle_admin_message %s", prompt_text)
         create_prompt(self.db, prompt_text)
         self.send_prompts(prompt_text)
 
     def send_prompts(self, prompt_text: str):
         users = get_users(self.db, 0, 1000)
-        logger.info("send_prompts", len(users), prompt_text)
+        logger.info("send_prompts %d %s", len(users), prompt_text)
         for user in users:
             self.send_prompt(user.phone, prompt_text)
 
     def send_prompt(self, prompt_text: str, phone: str):
-        logger.info("send_prompt", phone, prompt_text)
+        logger.info("send_prompt %s %s", phone, prompt_text)
         msg = PROMPT.format(prompt=prompt)
         self.send_message(phone, prompt_text)
 

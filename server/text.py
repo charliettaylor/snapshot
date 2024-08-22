@@ -109,6 +109,11 @@ class TextInterface(ABC):
         elif "SEND" in text:
             self.send_prompts()
 
+    def handle_image(self, from_: str, url: str):
+        # check if valid user
+        # put into DB
+        pass
+
     def get_random_prompt(self):
         pass
 

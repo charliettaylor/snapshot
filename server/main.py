@@ -62,7 +62,7 @@ def receive_message(
     MediaContentType0: Optional[str] = Form(None),
     MediaUrl0: Optional[str] = Form(None),
 ):
-    if MediaContentType == "image":
+    if MediaContentType0 == "image":
         twilio.client.handle_image(From, MediaUrl0)
     else:
         twilio_client.handle_message(From, Body)

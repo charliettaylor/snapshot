@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/gallery.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <title>Snapshot</title>
+</head>
+
+<body>
+    <ul>
+        {% for pic in pics %}
+        <li><img src="{{pic.url}}" /></li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

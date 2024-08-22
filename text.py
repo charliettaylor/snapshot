@@ -129,4 +129,4 @@ class TextInterface(ABC):
         self.send_message(phone, prompt_text)
 
     def generate_url(self, user_hash: str):
-        return BASE_URL + user_hash
+        return BASE_URL + "v/" + user_hash

@@ -59,7 +59,7 @@ def receive_message(
     return Response(content=str(response), media_type="application/xml")
 
 
-@app.get("/{user_hash}")
+@app.get("/{user_hash}", response_class=HTMLResponse)
 def images_page(user_hash: str, n: Optional[int] = None, db: Session = Depends(get_db)):
     if n is None:
         n = crud.get_current_prompt(db).id
@@ -78,9 +78,7 @@ def images_page(user_hash: str, n: Optional[int] = None, db: Session = Depends(g
         </head>
         <body>
             <h1>Submissions</h1>
-            <ul>
-            {}
-            </ul>
+            <ul>{}</ul>
         </body>
     </html>
     """.format(
@@ -88,7 +86,7 @@ def images_page(user_hash: str, n: Optional[int] = None, db: Session = Depends(g
     )
 
 
-@app.get("/{user_hash}/history")
+@app.get("/{user_hash}/history", response_class=HTMLResponse)
 def history_page(user_hash: str, db: Session = Depends(get_db)):
     pics = crud.get_pics_by_hash(db, user_hash)
     html_list = []

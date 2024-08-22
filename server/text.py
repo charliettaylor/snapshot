@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 
+import logging
 
 from database import get_db
 from models import Registration, User
 from config import settings
 from crud import *
 from constants import *
+from log import logger
 
 
 def contains(text: str, words: [str], ignore_case=True):
@@ -31,16 +33,20 @@ class TextInterface(ABC):
 
     def handle_message(self, from_: str, text: str):
 
+        logger.info("handle_message", from_, text)
+
         if settings.admin_pass in text:
             self.handle_admin_message(text)
             return
 
         reg = get_reg(self.db, from_)
+        logger.debug("handle_message reg", vars(reg) if reg is not None else reg)
         if reg is None:
-            print("Creating registration...")
+            logger.info("handle_message create_reg", _from)
             reg = create_reg(self.db, from_)
 
         user = get_user_by_phone(self.db, from_)
+        logger.debug("handle_message reg", vars(user) if user is not None else user)
 
         if contains(text, STOP_KEYWORDS):
             if user is not None:
@@ -84,6 +90,9 @@ class TextInterface(ABC):
             self.send_message(from_, ENTER_USERNAME_AGAIN)
 
     def handle_image(self, from_: str, url: str):
+
+        logger.info("handle_image", from_, url)
+
         user = get_user_by_phone(self.db, from_)
 
         if user is None:
@@ -111,17 +120,19 @@ class TextInterface(ABC):
         pass
 
     def handle_admin_message(self, text: str):
-        print("ADMIN MODE INITIATED")
         prompt_text = " ".join(text.split(" ")[1:])
+        logger.info("handle_admin_message", prompt_text)
         create_prompt(self.db, prompt_text)
         self.send_prompts(prompt_text)
 
     def send_prompts(self, prompt_text: str):
         users = get_users(self.db, 0, 1000)
+        logger.info("send_prompts", len(users), prompt_text)
         for user in users:
             self.send_prompt(user.phone, prompt_text)
 
     def send_prompt(self, prompt_text: str, phone: str):
+        logger.info("send_prompt", phone, prompt_text)
         msg = PROMPT.format(prompt=prompt)
         self.send_message(phone, prompt_text)
 

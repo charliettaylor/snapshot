@@ -22,6 +22,8 @@ from database import engine, get_db
 from typing import Generator, Optional
 from constants import *
 
+from log import logger
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -49,7 +51,7 @@ def receive_message(
     MediaContentType0: Optional[str] = Form(None),
     MediaUrl0: Optional[str] = Form(None),
 ):
-    print(From, Body, MediaContentType0, MediaUrl0)
+    logger.info("/sms", From, Body, MediaContentType0, MediaUrl0)
     if MediaContentType0 is not None and "image" in MediaContentType0:
         twilio_client.handle_image(From, MediaUrl0)
     else:

@@ -120,12 +120,11 @@ def get_submission_status(db: Session, user_hash: str, prompt_num: int) -> bool:
     )
 
 
-def create_pic(db: Session, username: str, file: UploadFile) -> models.Pic:
-    p = get_current_prompt(db)
-    if get_pic(db, pic.user, p) is not None:
+def create_pic(db: Session, url: str, prompt_id: int, username: str) -> models.Pic:
+    if get_pic(db, username, p) is not None:
         return None
 
-    picModel = models.Pic(**pic)
+    picModel = models.Pic(url=url, prompt=prompt_id, user=username)
 
     db.add(picModel)
     db.commit()

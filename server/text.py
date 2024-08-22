@@ -133,10 +133,7 @@ class TextInterface(ABC):
             self.send_message(from_, ALREADY_SUBMITTED)
             return
 
-        pic = create_pic(
-            self.db,
-            schema.Pic(url=url, prompt=prompt, user=user.username),
-        )
+        pic = create_pic(self.db, url, prompt.id, user.username)
 
         if pic is None:
             self.send_message(from_, FAILED_PIC_SAVE)

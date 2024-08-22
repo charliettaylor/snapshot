@@ -20,10 +20,9 @@ from sms import SmsClient
 from database import engine, get_db
 
 from typing import Generator, Optional
+from constants import *
 
 models.Base.metadata.create_all(bind=engine)
-
-BASE_URL = "https://snapshot.lieber.men/"
 
 app = FastAPI()
 twilio_client = SmsClient()

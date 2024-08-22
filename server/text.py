@@ -31,6 +31,12 @@ START_KEYWORDS = ["START", "PLAY", "OPTIN", "SUBSCRIBE", "RESUBSCRIBE"]
 POSITIVE_KEYWORDS = ["YES", "Y", "YE", "YEAH", "YEA", "CONFIRM", "YEP"]
 NEGATIVE_KEYWORDS = ["NO", "N", "NOPE", "NAY", "NAH"]
 
+INVALID_USER = SNAPSHOT + "Couldn't find user, please register first."
+ALREADY_SUBMITTED = SNAPSHOT + "You already submitted for this prompt."
+FAILED_PIC_SAVE = SNAPSHOT + "Couldn't save your pic, oops!"
+
+VIEW_SUBMISSIONS = SNAPSHOT + "Thanks for submitting! View all submissions here:\n{}"
+
 
 def contains(text: str, words: [str], ignore_case=True):
     for word in words:
@@ -111,13 +117,32 @@ class TextInterface(ABC):
             update_reg(self.db, Registration(phone=from_, username=None, state=1))
             self.send_message(from_, ENTER_USERNAME_AGAIN)
 
-        elif "SEND" in text:
-            self.send_prompts()
-
     def handle_image(self, from_: str, url: str):
-        # check if valid user
-        # put into DB
-        pass
+        user = get_user_by_phone(self.db, from_)
+
+        if user is None:
+            self.send_message(from_, INVALID_USER)
+            return
+
+        prompt = get_current_prompt(self.db)
+
+        exists = get_submission_status(self.db, user.hash, prompt.id)
+
+        if exists:
+            self.send_message(from_, ALREADY_SUBMITTED)
+            return
+
+        pic = create_pic(
+            self.db,
+            schema.Pic(url=url, prompt=prompt, user=user.username),
+        )
+
+        if pic is None:
+            self.send_message(from_, FAILED_PIC_SAVE)
+        else:
+            self.send_message(
+                from_, VIEW_SUBMISSIONS.format(self.generate_url(user.hash))
+            )
 
     def get_random_prompt(self):
         pass

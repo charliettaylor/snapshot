@@ -9,8 +9,7 @@ class DbModel(BaseModel):
 
 class Pic(DbModel):
     id: int
-    data: bytes
-    format: str
+    url: str
     prompt: int
     user: str
 

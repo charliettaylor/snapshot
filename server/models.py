@@ -1,7 +1,6 @@
-from sqlalchemy import BLOB, Boolean, Column, ForeignKey, Integer, String, true
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, true
 from sqlalchemy.orm import relationship, Mapped
 from typing import Optional
-from pydantic import BaseModel
 
 
 from database import Base
@@ -39,8 +38,7 @@ class Pic(Base):
     __tablename__ = "pics"
 
     id = Column(Integer, primary_key=True)
-    data = Column(BLOB)
-    format = Column(String)
+    url = Column(String)
     prompt = Column(Integer, ForeignKey("prompts.id"))
     user = Column(String, ForeignKey("users.username"))
 

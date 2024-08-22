@@ -33,7 +33,5 @@ class Registration(DbModel):
 class Prompt(DbModel):
     id: int
     prompt: str
-    week: int
-    year: int
 
     pics: List[Pic] | None

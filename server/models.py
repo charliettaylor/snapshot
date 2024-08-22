@@ -31,8 +31,6 @@ class Prompt(Base):
 
     id = Column(Integer, primary_key=True)
     prompt = Column(String, nullable=False)
-    week = Column(Integer, nullable=False)
-    year = Column(Integer, nullable=False)
 
     pics: Mapped[Optional["Pic"]] = relationship("Pic", back_populates="parent")
 

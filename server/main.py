@@ -23,6 +23,8 @@ from typing import Generator, Optional
 
 models.Base.metadata.create_all(bind=engine)
 
+prompt_num = None
+
 app = FastAPI()
 twilio_client = SmsClient()
 
@@ -70,11 +72,24 @@ def receive_message(
     return Response(content=str(response), media_type="application/xml")
 
 
-@app.post("/send_prompt")
-def send_prompt(prompt: str = Body(...), password: str = Body(...)):
+@app.get("/{user_hash}")
+def images_page(user_hash: str, n: Optional[int]):
+    if n is None:
+        n = crud.get_current_prompt().id
+    if not crud.get_submission_status(user_hash, n):
+        return HTTPException(status_code=401, detail="No submission for this prompt")
+    return """
+    <html>
+        <head>
+            <title>Snapshot</title>
+        </head>
+        <body>
+            <h1>You submitted a snapshot! 📸</h1>
+        </body>
+    </html>
+    """
 
-    ### insert prompt into db
 
-    if password != settings.admin_pass:
-        return HTTPException(status_code=401, detail="Wrong password, LOSER!")
-    twilio_client.send_prompts(prompt)
+@app.get("/{user_hash}/history")
+def history_page(user_hash: str):
+    pass

@@ -43,6 +43,7 @@ templates = Jinja2Templates(directory="templates")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 @app.get("/", response_class=HTMLResponse)
 def read_root():
     return """
@@ -64,7 +65,9 @@ def receive_message(
     MediaContentType0: Optional[str] = Form(None),
     MediaUrl0: Optional[str] = Form(None),
 ):
-    logger.info("/sms %s %s %s %s", str(From), str(Body), str(MediaContentType0), str(MediaUrl0))
+    logger.info(
+        "/sms %s %s %s %s", str(From), str(Body), str(MediaContentType0), str(MediaUrl0)
+    )
     if MediaContentType0 is not None and "image" in MediaContentType0:
         twilio_client.handle_image(From, MediaUrl0)
     else:

@@ -11,6 +11,7 @@ from util import *
 
 logger = logging.getLogger(__name__)
 
+
 class TextInterface(ABC):
     def __init__(self):
         self.db = next(get_db(), None)
@@ -24,7 +25,6 @@ class TextInterface(ABC):
         pass
 
     def handle_message(self, from_: str, text: str):
-
         logger.info("handle_message %s %s", from_, text)
 
         if settings.admin_pass in text:
@@ -32,13 +32,17 @@ class TextInterface(ABC):
             return
 
         reg = get_reg(self.db, from_)
-        logger.debug("handle_message reg %s", vars(reg) if reg is not None else str(reg))
+        logger.debug(
+            "handle_message reg %s", vars(reg) if reg is not None else str(reg)
+        )
         if reg is None:
             logger.info("handle_message create_reg %s", from_)
             reg = create_reg(self.db, from_)
 
         user = get_user_by_phone(self.db, from_)
-        logger.debug("handle_message user %s", vars(user) if user is not None else str(user))
+        logger.debug(
+            "handle_message user %s", vars(user) if user is not None else str(user)
+        )
 
         if contains(text, STOP_KEYWORDS):
             if user is not None:
@@ -54,7 +58,6 @@ class TextInterface(ABC):
             self.send_message(from_, UNSUBSCRIBED)
 
         elif reg.state == 0 and contains(text, START_KEYWORDS):
-
             update_reg(self.db, from_, 1)
             self.send_message(from_, ENTER_USERNAME)
 
@@ -82,7 +85,6 @@ class TextInterface(ABC):
             self.send_message(from_, ENTER_USERNAME_AGAIN)
 
     def handle_image(self, from_: str, url: str):
-
         logger.info("handle_image %s %s", from_, url)
 
         user = get_user_by_phone(self.db, from_)
@@ -120,10 +122,10 @@ class TextInterface(ABC):
         for user in users:
             self.send_prompt(user.phone, prompt_text)
 
-    def send_prompt(self, prompt_text: str, phone: str):
+    def send_prompt(self, phone: str, prompt_text: str):
         logger.info("send_prompt %s %s", phone, prompt_text)
         msg = PROMPT.format(prompt=prompt_text)
-        self.send_message(phone, prompt_text)
+        self.send_message(phone, msg)
 
     def generate_url(self, user_hash: str):
         return BASE_URL + "v/" + user_hash

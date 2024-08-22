@@ -96,6 +96,10 @@ def get_pics_by_hash(db: Session, user_hash: str) -> List[models.Pic]:
     return db.query(models.Pic).filter(models.Pic.user == user.username)
 
 
+def get_pics_by_prompt(db: Session, prompt_num: int) -> List[models.Pic]:
+    return db.query(models.Pic).filter(models.Pic.id == prompt_num)
+
+
 def get_submission_status(db: Session, user_hash: str, prompt_num: int) -> bool:
     user: models.User = (
         db.query(models.User).filter(models.User.hash == user_hash).first()

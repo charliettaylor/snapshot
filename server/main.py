@@ -78,16 +78,27 @@ def images_page(user_hash: str, n: Optional[int]):
         n = crud.get_current_prompt().id
     if not crud.get_submission_status(user_hash, n):
         return HTTPException(status_code=401, detail="No submission for this prompt")
+
+    pics = crud.get_pics_by_prompt(n)
+    html_list = []
+    for pic in pics:
+        html_list.append("<li>{}/li>".format(pic.id))
+
     return """
     <html>
         <head>
             <title>Snapshot</title>
         </head>
         <body>
-            <h1>You submitted a snapshot! 📸</h1>
+            <h1>Submissions</h1>
+            <ul>
+            {}
+            </ul>
         </body>
     </html>
-    """
+    """.format(
+        "".join(html_list)
+    )
 
 
 @app.get("/{user_hash}/history")

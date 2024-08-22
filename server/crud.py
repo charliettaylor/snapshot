@@ -19,11 +19,6 @@ def get_user_by_hash(db: Session, hash: str) -> models.User | None:
     return db.query(models.User).filter(models.User.hash == hash).first()
 
 
-def get_pic_status_by_hash(db: Session, hash: str) -> bool:
-    # TODO
-    pass
-
-
 def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]:
     return db.query(models.User).offset(skip).limit(limit).all()
 
@@ -86,11 +81,30 @@ def get_current_prompt(db: Session) -> models.Prompt | None:
     return db.query(models.Prompt).order_by(models.Prompt.id.desc()).first()
 
 
-def get_pic(db: Session, username: str | None = None, prompt: str | None = None):
+def get_pic(db: Session, username: str, prompt_num: int):
     return (
         db.query(models.Pic)
-        .filter(models.Pic.user == username and models.Pic.prompt == prompt)
+        .filter(models.Pic.user == username and models.Pic.id == prompt_num)
         .first()
+    )
+
+
+def get_pics_by_hash(db: Session, user_hash: str) -> List[models.Pic]:
+    user: models.User = (
+        db.query(models.User).filter(models.User.hash == user_hash).first()
+    )
+    return db.query(models.Pic).filter(models.Pic.user == user.username)
+
+
+def get_submission_status(db: Session, user_hash: str, prompt_num: int) -> bool:
+    user: models.User = (
+        db.query(models.User).filter(models.User.hash == user_hash).first()
+    )
+    return (
+        db.query(models.Pic)
+        .filter(models.Pic.user == user.username and models.Pic.id == prompt)
+        .first()
+        is not None
     )
 
 

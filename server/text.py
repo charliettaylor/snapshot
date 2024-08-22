@@ -7,7 +7,7 @@ from database import get_db
 from crud import *
 from config import settings
 
-BASE_URL = "https://snapshot.lieber.men/u/"
+BASE_URL = "https://snapshot.lieber.men/"
 
 SNAPSHOT = "Snapshot 📸: "
 SNAPSHOT_MULTI_LINE = "Snapshot 📸"
@@ -131,3 +131,6 @@ class TextInterface(ABC):
         for user in users:
             msg = PROMPT.format(prompt=prompt)
             self.send_message(user.phone, msg)
+
+    def generate_url(self, user_hash: str):
+        return BASE_URL + user_hash

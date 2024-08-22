@@ -92,4 +92,23 @@ def images_page(user_hash: str, n: Optional[int]):
 
 @app.get("/{user_hash}/history")
 def history_page(user_hash: str):
-    pass
+    pics = crud.get_pics_by_hash(user_hash)
+    html_list = []
+    for pic in pics:
+        html_list.append("<li>{}/li>".format(pic.id))
+
+    return """
+    <html>
+        <head>
+            <title>Snapshot</title>
+        </head>
+        <body>
+            <h1>History</h1>
+            <ul>
+                {}
+            </ul>
+        </body>
+    </html>
+    """.format(
+        "".join(html_list)
+    )

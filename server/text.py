@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 
 
 from util import super_good_hash
-from schema import Registration, User
 from database import get_db
+from models import Registration, User 
 from crud import *
 from config import settings
 
@@ -86,7 +86,7 @@ class TextInterface(ABC):
             self.send_message(from_, UNSUBSCRIBED)
 
         elif reg.state == 0 and contains(text, START_KEYWORDS):
-            update_reg(self.db, Registration(phone=from_, username=None, state=1))
+            update_reg(self.db, models.Registration(phone=from_, username=None, state=1))
             self.send_message(from_, ENTER_USERNAME)
 
         elif reg.state == 0:

@@ -21,7 +21,7 @@ def contains(text: str, words: [str], ignore_case=True):
 
 class TextInterface(ABC):
     def __init__(self):
-        self.db = next(get_db(), None)
+        eelf.db = next(get_db(), None)
 
     @abstractmethod
     def send_message(self, to: str, text: str):

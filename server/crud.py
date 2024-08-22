@@ -67,7 +67,7 @@ def update_reg(
 
     db_reg.state = state
     if username is not None:
-        db_reg.username = reg.username
+        db_reg.username = username
     db.commit()
 
     return db_reg

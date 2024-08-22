@@ -56,7 +56,7 @@ class TextInterface(ABC):
     def handle_message(self, from_: str, text: str):
 
         if settings.admin_pass in text:
-            handle_admin_message(text)
+            self.handle_admin_message(text)
 
         reg = get_reg(self.db, from_)
         if reg is None:

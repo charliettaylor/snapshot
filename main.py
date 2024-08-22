@@ -21,9 +21,10 @@ from database import SessionLocal, engine, get_db
 from sms import SmsClient
 from database import engine, get_db
 
-from typing import Generator, Optional
 from constants import *
 
+from datetime import datetime
+from typing import Generator, Optional
 import logging
 
 logging.basicConfig(
@@ -91,8 +92,10 @@ def images_page(
 
     pics = crud.get_pics_by_prompt(db, n)
 
+    date_str = datetime.strptime("%Y-%m-%d", prompt.date).strftime("%b %-d, %Y")
+
     return templates.TemplateResponse(
-        request=request, name="gallery.html", context={"pics": pics, "prompt": prompt}
+        request=request, name="gallery.html", context={"pics": pics, "prompt": prompt.prompt, "date": date_str}
     )
 
 

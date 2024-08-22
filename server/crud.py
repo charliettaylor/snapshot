@@ -93,7 +93,7 @@ def create_prompt(db: Session, prompt_text: str):
 def get_pic(db: Session, username: str, prompt_id: int):
     return (
         db.query(models.Pic)
-        .filter(models.Pic.user == username, models.Pic.id == prompt_id)
+        .filter(models.Pic.user == username, models.Pic.prompt == prompt_id)
         .first()
     )
 

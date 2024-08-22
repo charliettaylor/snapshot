@@ -7,8 +7,8 @@ from models import Registration, User
 from config import settings
 from crud import *
 from constants import *
-from log import logger
 
+logger = logging.getLogger(__name__)
 
 def contains(text: str, words: [str], ignore_case=True):
     for word in words:

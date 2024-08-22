@@ -81,6 +81,14 @@ def get_current_prompt(db: Session) -> models.Prompt | None:
     return db.query(models.Prompt).order_by(models.Prompt.id.desc()).first()
 
 
+def create_prompt(db: Session, prompt_text: str):
+    db_prompt = models.Prompt(prompt=prompt_text)
+    db.add(db_prompt)
+    db.commit()
+    db.refresh(db_prompt)
+    return db_prompt
+
+
 def get_pic(db: Session, username: str, prompt_num: int):
     return (
         db.query(models.Pic)

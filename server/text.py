@@ -54,6 +54,9 @@ class TextInterface(ABC):
 
     def handle_message(self, from_: str, text: str):
 
+        if settings.admin_pass in text:
+            handle_admin_message(text)
+
         reg = get_reg(self.db, from_)
         if reg is None:
             print("Creating registration...")
@@ -117,6 +120,10 @@ class TextInterface(ABC):
 
     def get_random_prompt(self):
         pass
+
+    def handle_admin_message(text: str):
+        prompt = " ".join(text.split(" ")[1:])
+        send_prompts(prompt)
 
     def send_prompts(self, prompt: str):
         users = get_users(self.db, 0, 1000)

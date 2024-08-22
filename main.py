@@ -92,7 +92,7 @@ def images_page(
     pics = crud.get_pics_by_prompt(db, n)
 
     return templates.TemplateResponse(
-        request=request, name="gallery.html", context={"pics": pics, prompt: prompt.prompt}
+        request=request, name="gallery.html", context={"pics": pics, "prompt": prompt.prompt}
     )
 
 

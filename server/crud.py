@@ -93,7 +93,7 @@ def create_prompt(db: Session, prompt_text: str):
 def get_pic(db: Session, username: str, prompt_id: int):
     return (
         db.query(models.Pic)
-        .filter(models.Pic.user == username and models.Pic.id == prompt_id)
+        .filter(models.Pic.user == username, models.Pic.id == prompt_id)
         .first()
     )
 
@@ -113,14 +113,10 @@ def get_submission_status(db: Session, user_hash: str, prompt_id: int) -> bool:
     user = get_user_by_hash(db, user_hash)
     if user is None:
         return False
-    pic = (
-        db.query(models.Pic)
-        .filter(models.Pic.user == user.username and models.Pic.prompt == prompt_id)
-        .first()
-    )
+    pic = get_pic(db, user.username, prompt_id)
 
-    print(pic)
-    return pics is not None
+    print(vars(pic))
+    return pic is not None
 
 
 def create_pic(db: Session, url: str, prompt_id: int, username: str) -> models.Pic:

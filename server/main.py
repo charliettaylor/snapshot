@@ -37,15 +37,18 @@ def read_root():
     </html>
     """
 
-
-@app.post("/upload/{user_hash}")
+@app.post('/u/{user_hash}')
 def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
     user = crud.get_user_by_hash(db, user_hash)
 
     if user is None:
         raise HTTPException(status_code=400, detail="Invalid user")
 
-    return crud.create_pic(db, user.username, file)
+    pic = crud.create_pic(db, user.username, file)
+    if pic is None:
+         raise HTTPException(status_code=400, detail="Already submitted pic")
+
+    return pic
 
 
 @app.post("/sms")

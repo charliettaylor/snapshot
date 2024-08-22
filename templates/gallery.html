@@ -15,7 +15,7 @@
 <body>
     <center>
         <h1>{{prompt.prompt}}</h1>
-        <h3>Posted {{prompt.date}}</h3>
+        <h3>Posted {{prompt.date.strftime("%b %d, %Y"}}</h3>
     </center>
     <ul>
         {% for pic in pics %}

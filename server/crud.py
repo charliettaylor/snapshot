@@ -89,10 +89,10 @@ def create_prompt(db: Session, prompt_text: str):
     return db_prompt
 
 
-def get_pic(db: Session, username: str, prompt_num: int):
+def get_pic(db: Session, username: str, prompt_id: int):
     return (
         db.query(models.Pic)
-        .filter(models.Pic.user == username and models.Pic.id == prompt_num)
+        .filter(models.Pic.user == username and models.Pic.id == prompt_id)
         .first()
     )
 
@@ -104,11 +104,11 @@ def get_pics_by_hash(db: Session, user_hash: str) -> List[models.Pic]:
     return db.query(models.Pic).filter(models.Pic.user == user.username)
 
 
-def get_pics_by_prompt(db: Session, prompt_num: int) -> List[models.Pic]:
-    return db.query(models.Pic).filter(models.Pic.id == prompt_num)
+def get_pics_by_prompt(db: Session, prompt_id: int) -> List[models.Pic]:
+    return db.query(models.Pic).filter(models.Pic.id == prompt_id)
 
 
-def get_submission_status(db: Session, user_hash: str, prompt_num: int) -> bool:
+def get_submission_status(db: Session, user_hash: str, prompt_id: int) -> bool:
     user: models.User = (
         db.query(models.User).filter(models.User.hash == user_hash).first()
     )
@@ -121,7 +121,7 @@ def get_submission_status(db: Session, user_hash: str, prompt_num: int) -> bool:
 
 
 def create_pic(db: Session, url: str, prompt_id: int, username: str) -> models.Pic:
-    if get_pic(db, username, p) is not None:
+    if get_pic(db, username, prompt_id) is not None:
         return None
 
     picModel = models.Pic(url=url, prompt=prompt_id, user=username)

@@ -23,7 +23,7 @@ from typing import Generator, Optional
 
 models.Base.metadata.create_all(bind=engine)
 
-prompt_num = None
+BASE_URL = "https://snapshot.lieber.men/"
 
 app = FastAPI()
 twilio_client = SmsClient()
@@ -91,7 +91,9 @@ def history_page(user_hash: str, db: Session = Depends(get_db)):
     pics = crud.get_pics_by_hash(db, user_hash)
     html_list = []
     for pic in pics:
-        html_list.append("<li>{}/li>".format(pic.id))
+        prompt = crud.get_prompt(db, pic.prompt)
+        url = BASE_URL + "/{}?n={}".format(user_hash, prompt.id)
+        html_list.append('<li><a href="{}">{}</a></li>'.format(prompt.prompt, url))
 
     return """
     <html>
@@ -100,9 +102,7 @@ def history_page(user_hash: str, db: Session = Depends(get_db)):
         </head>
         <body>
             <h1>History</h1>
-            <ul>
-                {}
-            </ul>
+            <ul>{}</ul>
         </body>
     </html>
     """.format(

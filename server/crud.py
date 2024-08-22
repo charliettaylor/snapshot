@@ -74,6 +74,10 @@ def update_reg(db: Session, reg: models.Registration) -> models.Registration | N
     return db_reg
 
 
+def get_prompt(db: Session, prompt_id: int) -> models.Prompt | None:
+    return db.query(models.Prompt).filter(models.Prompt.id == prompt_id).first()
+
+
 def get_current_prompt(db: Session) -> models.Prompt | None:
     return db.query(models.Prompt).order_by(models.Prompt.id.desc()).first()
 

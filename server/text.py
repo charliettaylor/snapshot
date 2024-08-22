@@ -38,7 +38,7 @@ class TextInterface(ABC):
             reg = create_reg(self.db, from_)
 
         user = get_user_by_phone(self.db, from_)
-        logger.debug("handle_message reg %s", vars(user) if user is not None else str(user))
+        logger.debug("handle_message user %s", vars(user) if user is not None else str(user))
 
         if contains(text, STOP_KEYWORDS):
             if user is not None:

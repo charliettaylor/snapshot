@@ -150,7 +150,7 @@ class TextInterface(ABC):
     def handle_admin_message(self, text: str):
         prompt_text = " ".join(text.split(" ")[1:])
         create_prompt(self.db, prompt_text)
-        self.send_prompts(prompt)
+        self.send_prompts(prompt_text)
 
     def send_prompts(self, prompt: str):
         users = get_users(self.db, 0, 1000)

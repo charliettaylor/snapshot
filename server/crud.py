@@ -2,36 +2,38 @@ import datetime
 from typing import List
 
 from click import prompt
-import models
+from models import *
 from sqlalchemy.orm import Session
 from fastapi import UploadFile
+import util
 
 
-def get_user(db: Session, username: str) -> models.User | None:
-    return db.query(models.User).filter(models.User.username == username).first()
+def get_user(db: Session, username: str) -> User | None:
+    return db.query(User).filter(User.username == username).first()
 
 
-def get_user_by_phone(db: Session, phone: str) -> models.User | None:
-    return db.query(models.User).filter(models.User.phone == phone).first()
+def get_user_by_phone(db: Session, phone: str) -> User | None:
+    return db.query(User).filter(User.phone == phone).first()
 
 
-def get_user_by_hash(db: Session, hash: str) -> models.User | None:
-    return db.query(models.User).filter(models.User.hash == hash).first()
+def get_user_by_hash(db: Session, hash: str) -> User | None:
+    return db.query(User).filter(User.hash == hash).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]:
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[User]:
+    return db.query(User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: models.User) -> models.User:
+def create_user(db: Session, phone: str, username: str) -> User:
+    user = User(username, phone, true, util.user_hash(username), None)
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
 
 
-def update_user(db: Session, user: models.User) -> models.User | None:
-    db_user = db.query(models.User).filter(models.User.phone == user.phone).first()
+def update_user(db: Session, user: User) -> User | None:
+    db_user = db.query(User).filter(User.phone == user.phone).first()
 
     if db_user is None:
         return None
@@ -43,47 +45,44 @@ def update_user(db: Session, user: models.User) -> models.User | None:
     return db_user
 
 
-def get_reg(db: Session, phone: str) -> models.Registration | None:
-    return (
-        db.query(models.Registration).filter(models.Registration.phone == phone).first()
-    )
+def get_reg(db: Session, phone: str) -> Registration | None:
+    return db.query(Registration).filter(Registration.phone == phone).first()
 
 
-def create_reg(db: Session, phone: str) -> models.Registration:
-    db_reg = models.Registration(phone=phone, state=0)
+def create_reg(db: Session, phone: str) -> Registration:
+    db_reg = Registration(phone=phone, state=0)
     db.add(db_reg)
     db.commit()
     db.refresh(db_reg)
     return db_reg
 
 
-def update_reg(db: Session, reg: models.Registration) -> models.Registration | None:
-    db_reg = (
-        db.query(models.Registration)
-        .filter(models.Registration.phone == reg.phone)
-        .first()
-    )
+def update_reg(
+    db: Session, phone: str, state: int, username: Optional[int] = None
+) -> Registration | None:
+    db_reg = db.query(Registration).filter(Registration.phone == phone).first()
 
     if db_reg is None:
         return None
 
-    db_reg.username = reg.username  # type: ignore
-    db_reg.state = reg.state  # type: ignore
+    db_reg.state = state
+    if username is not None:
+        db_reg.username = reg.username
     db.commit()
 
     return db_reg
 
 
-def get_prompt(db: Session, prompt_id: int) -> models.Prompt | None:
-    return db.query(models.Prompt).filter(models.Prompt.id == prompt_id).first()
+def get_prompt(db: Session, prompt_id: int) -> Prompt | None:
+    return db.query(Prompt).filter(Prompt.id == prompt_id).first()
 
 
-def get_current_prompt(db: Session) -> models.Prompt | None:
-    return db.query(models.Prompt).order_by(models.Prompt.id.desc()).first()
+def get_current_prompt(db: Session) -> Prompt | None:
+    return db.query(Prompt).order_by(Prompt.id.desc()).first()
 
 
 def create_prompt(db: Session, prompt_text: str):
-    db_prompt = models.Prompt(prompt=prompt_text)
+    db_prompt = Prompt(prompt=prompt_text)
     db.add(db_prompt)
     db.commit()
     db.refresh(db_prompt)
@@ -91,22 +90,16 @@ def create_prompt(db: Session, prompt_text: str):
 
 
 def get_pic(db: Session, username: str, prompt_id: int):
-    return (
-        db.query(models.Pic)
-        .filter(models.Pic.user == username, models.Pic.prompt == prompt_id)
-        .first()
-    )
+    return db.query(Pic).filter(Pic.user == username, Pic.prompt == prompt_id).first()
 
 
-def get_pics_by_hash(db: Session, user_hash: str) -> List[models.Pic]:
-    user: models.User = (
-        db.query(models.User).filter(models.User.hash == user_hash).first()
-    )
-    return db.query(models.Pic).filter(models.Pic.user == user.username)
+def get_pics_by_hash(db: Session, user_hash: str) -> List[Pic]:
+    user: User = db.query(User).filter(User.hash == user_hash).first()
+    return db.query(Pic).filter(Pic.user == user.username)
 
 
-def get_pics_by_prompt(db: Session, prompt_id: int) -> List[models.Pic]:
-    return db.query(models.Pic).filter(models.Pic.prompt == prompt_id)
+def get_pics_by_prompt(db: Session, prompt_id: int) -> List[Pic]:
+    return db.query(Pic).filter(Pic.prompt == prompt_id)
 
 
 def get_submission_status(db: Session, user_hash: str, prompt_id: int) -> bool:
@@ -118,11 +111,11 @@ def get_submission_status(db: Session, user_hash: str, prompt_id: int) -> bool:
     return pic is not None
 
 
-def create_pic(db: Session, url: str, prompt_id: int, username: str) -> models.Pic:
+def create_pic(db: Session, url: str, prompt_id: int, username: str) -> Pic:
     if get_pic(db, username, prompt_id) is not None:
         return None
 
-    picModel = models.Pic(url=url, prompt=prompt_id, user=username)
+    picModel = Pic(url=url, prompt=prompt_id, user=username)
 
     db.add(picModel)
     db.commit()

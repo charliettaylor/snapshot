@@ -1,41 +1,11 @@
 from abc import ABC, abstractmethod
 
 
-from util import super_good_hash
 from database import get_db
 from models import Registration, User
-from crud import *
 from config import settings
-
-BASE_URL = "https://snapshot.lieber.men/"
-
-SNAPSHOT = "Snapshot 📸: "
-SNAPSHOT_MULTI_LINE = "Snapshot 📸"
-
-HOW_TO_START = SNAPSHOT + "Text START to play."
-ENTER_USERNAME = (
-    SNAPSHOT
-    + "Text STOP to unsubscribe. To finish registering, please enter your username:"
-)
-ENTER_USERNAME_AGAIN = SNAPSHOT + "please enter your username:"
-CONFIRM_USERNAME = SNAPSHOT + 'You entered "{}", text YES to confirm or NO to change.'
-REGISTRATION_SUCCESSFUL = (
-    SNAPSHOT + 'You\'ve successfully registered as "{}". Thanks! :)'
-)
-UNSUBSCRIBED = SNAPSHOT + "You've successfully unsubscribed. Text START to resubscribe."
-PROMPT = SNAPSHOT_MULTI_LINE + "\n\n✨{prompt}✨\n\nSTOP to unsubscribe."
-
-STOP_KEYWORDS = ["STOP", "UNSUBSCRIBE", "OPTOUT"]
-START_KEYWORDS = ["START", "PLAY", "OPTIN", "SUBSCRIBE", "RESUBSCRIBE"]
-
-POSITIVE_KEYWORDS = ["YES", "Y", "YE", "YEAH", "YEA", "CONFIRM", "YEP"]
-NEGATIVE_KEYWORDS = ["NO", "N", "NOPE", "NAY", "NAH"]
-
-INVALID_USER = SNAPSHOT + "Couldn't find user, please register first."
-ALREADY_SUBMITTED = SNAPSHOT + "You already submitted for this prompt."
-FAILED_PIC_SAVE = SNAPSHOT + "Couldn't save your pic, oops!"
-
-VIEW_SUBMISSIONS = SNAPSHOT + "Thanks for submitting! View all submissions here:\n{}"
+from crud import *
+from constants import *
 
 
 def contains(text: str, words: [str], ignore_case=True):
@@ -86,38 +56,31 @@ class TextInterface(ABC):
             self.send_message(from_, UNSUBSCRIBED)
 
         elif reg.state == 0 and contains(text, START_KEYWORDS):
-            update_reg(
-                self.db, models.Registration(phone=from_, username=None, state=1)
-            )
+
+            update_reg(self.db, from_, 1)
             self.send_message(from_, ENTER_USERNAME)
 
         elif reg.state == 0:
             self.send_message(from_, HOW_TO_START)
 
         elif reg.state == 1:
-            update_reg(self.db, Registration(phone=from_, username=text, state=2))
+            if not util.validate_username(text):
+                self.send_message(from_, BAD_USERNAME)
+                return
+            update_reg(self.db, from_, 2, text)
+
             self.send_message(from_, CONFIRM_USERNAME.format(text))
 
         elif reg.state == 2 and contains(text, POSITIVE_KEYWORDS):
-            user_hash = super_good_hash(reg.username)
-            print(user_hash)
-            create_user(
-                self.db,
-                User(
-                    phone=from_,
-                    username=reg.username,
-                    active=True,
-                    hash=super_good_hash(reg.username),
-                    pics=None,
-                ),
-            )
-            update_reg(
-                self.db, Registration(phone=from_, username=reg.username, state=3)
-            )
+            create_user(self.db, from_, reg.username)
+            update_reg(self.db, from_, 3, reg.username)
             self.send_message(from_, REGISTRATION_SUCCESSFUL.format(reg.username))
+            prompt = get_current_prompt(self.db)
+            if prompt is not None:
+                self.send_prompt(from_, prompt.prompt)
 
         elif reg.state == 2 and contains(text, NEGATIVE_KEYWORDS):
-            update_reg(self.db, Registration(phone=from_, username=None, state=1))
+            update_reg(self.db, from_, 1)
             self.send_message(from_, ENTER_USERNAME_AGAIN)
 
     def handle_image(self, from_: str, url: str):
@@ -153,11 +116,14 @@ class TextInterface(ABC):
         create_prompt(self.db, prompt_text)
         self.send_prompts(prompt_text)
 
-    def send_prompts(self, prompt: str):
+    def send_prompts(self, prompt_text: str):
         users = get_users(self.db, 0, 1000)
         for user in users:
-            msg = PROMPT.format(prompt=prompt)
-            self.send_message(user.phone, msg)
+            self.send_prompt(user.phone, prompt_text)
+
+    def send_prompt(self, prompt_text: str, phone: str):
+        msg = PROMPT.format(prompt=prompt)
+        self.send_message(phone, prompt_text)
 
     def generate_url(self, user_hash: str):
         return BASE_URL + user_hash

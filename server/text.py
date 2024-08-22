@@ -63,6 +63,7 @@ class TextInterface(ABC):
 
         if settings.admin_pass in text:
             self.handle_admin_message(text)
+            return
 
         reg = get_reg(self.db, from_)
         if reg is None:
@@ -148,6 +149,7 @@ class TextInterface(ABC):
         pass
 
     def handle_admin_message(self, text: str):
+        print("ADMIN MODE INITIATED")
         prompt_text = " ".join(text.split(" ")[1:])
         create_prompt(self.db, prompt_text)
         self.send_prompts(prompt_text)

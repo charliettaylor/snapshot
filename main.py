@@ -92,7 +92,7 @@ def images_page(
 
     pics = crud.get_pics_by_prompt(db, n)
 
-    date_str = datetime.strptime("%Y-%m-%d", prompt.date).strftime("%b %-d, %Y")
+    date_str = prompt.date.strftime("%b %-d, %Y")
 
     return templates.TemplateResponse(
         request=request, name="gallery.html", context={"pics": pics, "prompt": prompt.prompt, "date": date_str}

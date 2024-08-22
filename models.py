@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, true
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, true
 from sqlalchemy.orm import relationship, Mapped
 from typing import Optional
 
@@ -30,6 +30,7 @@ class Prompt(Base):
 
     id = Column(Integer, primary_key=True)
     prompt = Column(String, nullable=False)
+    date = Column(Date, nullable=False)
 
     pics: Mapped[Optional["Pic"]] = relationship("Pic", back_populates="parent")
 

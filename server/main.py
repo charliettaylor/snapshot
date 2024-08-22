@@ -22,7 +22,16 @@ from database import engine, get_db
 from typing import Generator, Optional
 from constants import *
 
-from log import logger
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    filename="app.log",
+    filemode="a",
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 models.Base.metadata.create_all(bind=engine)
 

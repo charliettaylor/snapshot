@@ -114,19 +114,13 @@ def get_submission_status(db: Session, user_hash: str, prompt_num: int) -> bool:
 
 def create_pic(db: Session, username: str, file: UploadFile) -> models.Pic:
     p = get_current_prompt(db)
-    if get_pic(db, username, p) is not None:
+    if get_pic(db, pic.user, p) is not None:
         return None
 
-    fileBytes = file.file.read()
-    pic = models.Pic(data=fileBytes, format=file.content_type, user=username, prompt=p)
+    picModel = models.Pic(**pic)
 
-    db.add(pic)
+    db.add(picModel)
     db.commit()
-    db.refresh(pic)
+    db.refresh(picModel)
 
-    return pic
-
-
-def get_week_year() -> tuple[int, int]:
-    year, week, _ = datetime.date.today().isocalendar()
-    return week, year
+    return picModel

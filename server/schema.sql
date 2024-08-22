@@ -20,8 +20,7 @@ CREATE TABLE prompts (
 
 CREATE TABLE pics (
     id INTEGER PRIMARY KEY,
-    data BLOB NOT NULL,
-    format TEXT NOT NULL,
+    url TEXT NOT NULL,
     prompt INTEGER NOT NULL,
     user TEXT NOT NULL,
     FOREIGN KEY(prompt) REFERENCES prompts(id),

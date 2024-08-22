@@ -2,7 +2,7 @@ import datetime
 from typing import List
 
 from click import prompt
-import models, schema
+import models
 from sqlalchemy.orm import Session
 from fastapi import UploadFile
 
@@ -23,17 +23,14 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: schema.User) -> models.User:
-    db_user = models.User(
-        username=user.username, phone=user.phone, active=True, hash=user.hash, pics=None
-    )
-    db.add(db_user)
+def create_user(db: Session, user: models.User) -> models.User:
+    db.add(user)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(user)
+    return user
 
 
-def update_user(db: Session, user: schema.User) -> models.User | None:
+def update_user(db: Session, user: models.User) -> models.User | None:
     db_user = db.query(models.User).filter(models.User.phone == user.phone).first()
 
     if db_user is None:
@@ -60,7 +57,7 @@ def create_reg(db: Session, phone: str) -> models.Registration:
     return db_reg
 
 
-def update_reg(db: Session, reg: schema.Registration) -> models.Registration | None:
+def update_reg(db: Session, reg: models.Registration) -> models.Registration | None:
     db_reg = (
         db.query(models.Registration)
         .filter(models.Registration.phone == reg.phone)

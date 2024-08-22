@@ -60,7 +60,7 @@ def receive_message(
 
 
 @app.get("/{user_hash}")
-def images_page(user_hash: str, n: Optional[int]):
+def images_page(user_hash: str, n: Optional[int] = None):
     if n is None:
         n = crud.get_current_prompt().id
     if not crud.get_submission_status(user_hash, n):

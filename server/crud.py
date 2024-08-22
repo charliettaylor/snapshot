@@ -115,7 +115,6 @@ def get_submission_status(db: Session, user_hash: str, prompt_id: int) -> bool:
         return False
     pic = get_pic(db, user.username, prompt_id)
 
-    print(vars(pic))
     return pic is not None
 
 

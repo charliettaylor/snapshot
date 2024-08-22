@@ -122,9 +122,9 @@ class TextInterface(ABC):
     def get_random_prompt(self):
         pass
 
-    def handle_admin_message(text: str):
+    def handle_admin_message(self, text: str):
         prompt = " ".join(text.split(" ")[1:])
-        send_prompts(prompt)
+        self.send_prompts(prompt)
 
     def send_prompts(self, prompt: str):
         users = get_users(self.db, 0, 1000)

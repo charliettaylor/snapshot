@@ -15,7 +15,6 @@ from sqlalchemy.orm import Session
 import crud
 import models
 from config import settings
-from util import super_duper_good_hash
 from database import SessionLocal, engine, get_db
 from sms import SmsClient
 from database import engine, get_db
@@ -41,7 +40,8 @@ def read_root():
     </html>
     """
 
-@app.post('/u/{user_hash}')
+
+@app.post("/u/{user_hash}")
 def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
     user = crud.get_user_by_hash(db, user_hash)
 
@@ -50,7 +50,7 @@ def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
 
     pic = crud.create_pic(db, user.username, file)
     if pic is None:
-         raise HTTPException(status_code=400, detail="Already submitted pic")
+        raise HTTPException(status_code=400, detail="Already submitted pic")
 
     return pic
 
@@ -75,6 +75,6 @@ def send_prompt(prompt: str = Body(...), password: str = Body(...)):
 
     ### insert prompt into db
 
-    if super_duper_good_hash(password) != settings.admin_hash:
+    if password != settings.admin_pass:
         return HTTPException(status_code=401, detail="Wrong password, LOSER!")
     twilio_client.send_prompts(prompt)

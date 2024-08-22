@@ -5,6 +5,7 @@ from util import super_good_hash
 from schema import Registration, User
 from database import get_db
 from crud import *
+from config import settings
 
 BASE_URL = "https://snapshot.lieber.men/u/"
 

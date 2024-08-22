@@ -105,7 +105,7 @@ def get_pics_by_hash(db: Session, user_hash: str) -> List[models.Pic]:
 
 
 def get_pics_by_prompt(db: Session, prompt_id: int) -> List[models.Pic]:
-    return db.query(models.Pic).filter(models.Pic.id == prompt_id)
+    return db.query(models.Pic).filter(models.Pic.prompt == prompt_id)
 
 
 def get_submission_status(db: Session, user_hash: str, prompt_id: int) -> bool:

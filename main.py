@@ -9,6 +9,8 @@ from fastapi import (
     Body,
 )
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from twilio.twiml.messaging_response import MessagingResponse
 from sqlalchemy.orm import Session
 
@@ -37,7 +39,9 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 twilio_client = SmsClient()
+templates = Jinja2Templates(directory="templates")
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 def read_root():
@@ -69,34 +73,26 @@ def receive_message(
     return Response(content=str(response), media_type="application/xml")
 
 
-@app.get("/{user_hash}", response_class=HTMLResponse)
-def images_page(user_hash: str, n: Optional[int] = None, db: Session = Depends(get_db)):
+@app.get("/v/{user_hash}", response_class=HTMLResponse)
+def images_page(
+    user_hash: str,
+    request: Request,
+    n: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
     if n is None:
         n = crud.get_current_prompt(db).id
     if not crud.get_submission_status(db, user_hash, n):
         raise HTTPException(status_code=401, detail="No submission for this prompt")
 
     pics = crud.get_pics_by_prompt(db, n)
-    html_list = []
-    for pic in pics:
-        html_list.append('<li><img src="{}"></li>'.format(pic.url))
 
-    return """
-    <html>
-        <head>
-            <title>Snapshot</title>
-        </head>
-        <body>
-            <h1>Submissions</h1>
-            <ul>{}</ul>
-        </body>
-    </html>
-    """.format(
-        "".join(html_list)
+    return templates.TemplateResponse(
+        request=request, name="gallery.html", context={"pics": pics}
     )
 
 
-@app.get("/{user_hash}/history", response_class=HTMLResponse)
+@app.get("/v/{user_hash}/history", response_class=HTMLResponse)
 def history_page(user_hash: str, db: Session = Depends(get_db)):
     pics = crud.get_pics_by_hash(db, user_hash)
     html_list = []

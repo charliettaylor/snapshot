@@ -60,7 +60,7 @@ def receive_message(
     MediaContentType0: Optional[str] = Form(None),
     MediaUrl0: Optional[str] = Form(None),
 ):
-    logger.info("/sms", From, Body, MediaContentType0, MediaUrl0)
+    logger.info("/sms %s %s %s %s", str(From), str(Body), str(MediaContentType0), str(MediaUrl0))
     if MediaContentType0 is not None and "image" in MediaContentType0:
         twilio_client.handle_image(From, MediaUrl0)
     else:

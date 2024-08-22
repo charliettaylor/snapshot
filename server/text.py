@@ -8,13 +8,15 @@ from crud import *
 
 BASE_URL = "https://snapshot.lieber.men/u/"
 
-HOW_TO_START = "Snapshot: Text START to play."
-ENTER_USERNAME = "Snapshot: Text STOP to unsubscribe. To finish registering, please enter your username:"
-ENTER_USERNAME_AGAIN = "Snapshot: please enter your username:"
-CONFIRM_USERNAME = "Snapshot: You entered \"{}\", text YES to confirm or NO to change."
-REGISTRATION_SUCCESSFUL = "Snapshot: You've successfully registered as \"{}\". Thanks! :)"
-UNSUBSCRIBED = "Snapshot: You've successfully unsubscribed. Text START to resubscribe."
-PROMPT = "Snapshot: {prompt}\n{link}\nWeek {week} {year}\nSTOP to unsubscribe."
+SNAPSHOT = "Snapshot 📸: "
+
+HOW_TO_START = SNAPSHOT + "Text START to play."
+ENTER_USERNAME = SNAPSHOT + "Text STOP to unsubscribe. To finish registering, please enter your username:"
+ENTER_USERNAME_AGAIN = SNAPSHOT + "please enter your username:"
+CONFIRM_USERNAME = SNAPSHOT + "You entered \"{}\", text YES to confirm or NO to change."
+REGISTRATION_SUCCESSFUL = SNAPSHOT + "You've successfully registered as \"{}\". Thanks! :)"
+UNSUBSCRIBED = SNAPSHOT + "You've successfully unsubscribed. Text START to resubscribe."
+PROMPT = SNAPSHOT + "\n✨{prompt}✨\n\nWeek {week} {year}\nSTOP to unsubscribe."
 
 STOP_KEYWORDS = ["STOP", "UNSUBSCRIBE", "OPTOUT"]
 START_KEYWORDS = ["START", "PLAY", "OPTIN", "SUBSCRIBE", "RESUBSCRIBE"]
@@ -88,10 +90,8 @@ class TextInterface(ABC):
         users = get_users(self.db, 0, 1000)
         for user in users:
             link = self.generate_link(user)
-            msg = PROMPT.format(prompt="Send a photo of ur bobs", link=link, week=1, year=2024)
+            msg = PROMPT.format(prompt="Send a photo of ur bobs", week=1, year=2024)
             self.send_message(user.phone, msg)
 
-    def generate_link(self, user):
-        return BASE_URL + user.hash
 
         

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from typing import List
 
 from click import prompt
@@ -88,7 +88,7 @@ def get_current_prompt(db: Session) -> Prompt | None:
 
 
 def create_prompt(db: Session, prompt_text: str):
-    db_prompt = Prompt(prompt=prompt_text)
+    db_prompt = Prompt(prompt=prompt_text, date=datetime.now().date())
     db.add(db_prompt)
     db.commit()
     db.refresh(db_prompt)

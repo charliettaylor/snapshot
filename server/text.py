@@ -89,9 +89,5 @@ class TextInterface(ABC):
     def send_prompts(self):
         users = get_users(self.db, 0, 1000)
         for user in users:
-            link = self.generate_link(user)
             msg = PROMPT.format(prompt="Send a photo of ur bobs", week=1, year=2024)
             self.send_message(user.phone, msg)
-
-
-        

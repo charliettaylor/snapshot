@@ -19,6 +19,11 @@ def get_user_by_hash(db: Session, hash: str) -> models.User | None:
     return db.query(models.User).filter(models.User.hash == hash).first()
 
 
+def get_pic_status_by_hash(db: Session, hash: str) -> bool:
+    # TODO
+    pass
+
+
 def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]:
     return db.query(models.User).offset(skip).limit(limit).all()
 

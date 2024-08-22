@@ -83,15 +83,16 @@ def images_page(
     n: Optional[int] = None,
     db: Session = Depends(get_db),
 ):
+    prompt = crud.get_current_prompt(db)
     if n is None:
-        n = crud.get_current_prompt(db).id
+        n = prompt.id
     if not crud.get_submission_status(db, user_hash, n):
         raise HTTPException(status_code=401, detail="No submission for this prompt")
 
     pics = crud.get_pics_by_prompt(db, n)
 
     return templates.TemplateResponse(
-        request=request, name="gallery.html", context={"pics": pics}
+        request=request, name="gallery.html", context={"pics": pics, prompt: prompt.prompt}
     )
 
 

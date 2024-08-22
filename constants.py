@@ -4,9 +4,7 @@ SNAPSHOT = "Snapshot 📸: "
 SNAPSHOT_MULTI_LINE = "Snapshot 📸"
 
 HOW_TO_START = SNAPSHOT + "Text START to play."
-ENTER_USERNAME = (
-    SNAPSHOT + "Text STOP to unsubscribe.\n\nPlease enter your username:"
-)
+ENTER_USERNAME = SNAPSHOT + "Text STOP to unsubscribe.\n\nPlease enter your username:"
 ENTER_USERNAME_AGAIN = SNAPSHOT + "please enter your username:"
 CONFIRM_USERNAME = SNAPSHOT + 'You entered "{}", text YES to confirm or NO to change.'
 BAD_USERNAME = (

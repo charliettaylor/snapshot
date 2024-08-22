@@ -52,7 +52,7 @@ def receive_message(
 ):
     print(From, Body, MediaContentType0, MediaUrl0)
     if "image" in MediaContentType0:
-        twilio.client.handle_image(From, MediaUrl0)
+        twilio_client.handle_image(From, MediaUrl0)
     else:
         twilio_client.handle_message(From, Body)
     response = MessagingResponse()

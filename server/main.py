@@ -1,22 +1,26 @@
-from typing import Generator, Optional
-
-from fastapi import Depends, FastAPI, UploadFile, Form, Response, Request
-from twilio.twiml.messaging_response import MessagingResponse
-
-from fastapi import Depends, FastAPI, UploadFile
-from twilio.twiml.messaging_response import MessagingResponse
-
-from fastapi import Depends, FastAPI, HTTPException, UploadFile
+from fastapi import (
+    Depends,
+    FastAPI,
+    HTTPException,
+    UploadFile,
+    Form,
+    Response,
+    Request,
+    Body,
+)
 from fastapi.responses import HTMLResponse
-import crud
-
+from twilio.twiml.messaging_response import MessagingResponse
 from sqlalchemy.orm import Session
 
+import crud
+import models
+from config import settings
+from util import super_duper_good_hash
 from database import SessionLocal, engine, get_db
 from sms import SmsClient
 from database import engine, get_db
 
-import models
+from typing import Generator, Optional
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -64,3 +68,13 @@ def receive_message(
         twilio_client.handle_message(From, Body)
     response = MessagingResponse()
     return Response(content=str(response), media_type="application/xml")
+
+
+@app.post("/send_prompt")
+def send_prompt(prompt: str = Body(...), password: str = Body(...)):
+
+    ### insert prompt into db
+
+    if super_duper_good_hash(password) != settings.admin_hash:
+        return HTTPException(status_code=401, detail="Wrong password, LOSER!")
+    twilio_client.send_prompts(prompt)

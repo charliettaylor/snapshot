@@ -21,7 +21,7 @@ REGISTRATION_SUCCESSFUL = (
     SNAPSHOT + 'You\'ve successfully registered as "{}". Thanks! :)'
 )
 UNSUBSCRIBED = SNAPSHOT + "You've successfully unsubscribed. Text START to resubscribe."
-PROMPT = SNAPSHOT + "\n\n✨{prompt}✨\n\nWeek {week} {year}\nSTOP to unsubscribe."
+PROMPT = SNAPSHOT + "\n\n✨{prompt}✨\n\nSTOP to unsubscribe."
 
 STOP_KEYWORDS = ["STOP", "UNSUBSCRIBE", "OPTOUT"]
 START_KEYWORDS = ["START", "PLAY", "OPTIN", "SUBSCRIBE", "RESUBSCRIBE"]
@@ -117,8 +117,8 @@ class TextInterface(ABC):
     def get_random_prompt(self):
         pass
 
-    def send_prompts(self):
+    def send_prompts(self, prompt: str):
         users = get_users(self.db, 0, 1000)
         for user in users:
-            msg = PROMPT.format(prompt="Send a photo of ur bobs", week=1, year=2024)
+            msg = PROMPT.format(prompt=prompt)
             self.send_message(user.phone, msg)

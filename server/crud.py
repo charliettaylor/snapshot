@@ -115,7 +115,7 @@ def get_submission_status(db: Session, user_hash: str, prompt_id: int) -> bool:
         return False
     return (
         db.query(models.Pic)
-        .filter(models.Pic.user == user.username and models.Pic.id == prompt_id)
+        .filter(models.Pic.user == user.username and models.Pic.prompt == prompt_id)
         .first()
         is not None
     )

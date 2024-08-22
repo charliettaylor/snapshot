@@ -43,20 +43,6 @@ def read_root():
     """
 
 
-@app.post("/u/{user_hash}")
-def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
-    user = crud.get_user_by_hash(db, user_hash)
-
-    if user is None:
-        raise HTTPException(status_code=400, detail="Invalid user")
-
-    pic = crud.create_pic(db, user.username, file)
-    if pic is None:
-        raise HTTPException(status_code=400, detail="Already submitted pic")
-
-    return pic
-
-
 @app.post("/sms")
 def receive_message(
     From: Optional[str] = Form(None),
@@ -64,7 +50,8 @@ def receive_message(
     MediaContentType0: Optional[str] = Form(None),
     MediaUrl0: Optional[str] = Form(None),
 ):
-    if MediaContentType0 == "image":
+    print(From, Body, MediaContentType0, MediaUrl0)
+    if "image" in MediaContentType0:
         twilio.client.handle_image(From, MediaUrl0)
     else:
         twilio_client.handle_message(From, Body)

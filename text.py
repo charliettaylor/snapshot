@@ -34,7 +34,7 @@ class TextInterface(ABC):
         reg = get_reg(self.db, from_)
         logger.debug("handle_message reg %s", vars(reg) if reg is not None else str(reg))
         if reg is None:
-            logger.info("handle_message create_reg", from_)
+            logger.info("handle_message create_reg %s", from_)
             reg = create_reg(self.db, from_)
 
         user = get_user_by_phone(self.db, from_)

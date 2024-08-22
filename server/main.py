@@ -1,6 +1,6 @@
-from typing import Generator
+from typing import Generator, Optional
 
-from fastapi import Depends, FastAPI, UploadFile, Form, Response
+from fastapi import Depends, FastAPI, UploadFile, Form, Response, Request
 from twilio.twiml.messaging_response import MessagingResponse
 
 from fastapi import Depends, FastAPI, UploadFile
@@ -23,9 +23,10 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 twilio_client = SmsClient()
 
+
 @app.get("/", response_class=HTMLResponse)
 def read_root():
-        return """
+    return """
     <html>
         <head>
             <title>Snapshot</title>
@@ -36,7 +37,8 @@ def read_root():
     </html>
     """
 
-@app.post('/upload/{user_hash}')
+
+@app.post("/upload/{user_hash}")
 def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
     user = crud.get_user_by_hash(db, user_hash)
 
@@ -45,9 +47,21 @@ def upload(user_hash: str, file: UploadFile, db: Session = Depends(get_db)):
 
     return crud.create_pic(db, user.username, file)
 
+
 @app.post("/sms")
-def receive_message(From: str = Form(...), Body: str = Form(...)):
-    response = MessagingResponse() 
-    twilio_client.handle_message(From, Body)
+def receive_message(
+    From: Optional[str] = Form(None),
+    Body: Optional[str] = Form(None),
+    MediaContentType0: Optional[str] = Form(None),
+    MediaUrl0: Optional[str] = Form(None),
+):
+    print("sms")
+    print(request)
+    print(From)
+    print(Body)
+    print(MediaContentType0)
+    print(MediaUrl0)
+    response = MessagingResponse()
+    # twilio_client.handle_message(From, Body)
     return Response(content=str(response), media_type="application/xml")
     # twilio_client.send_message(from_, "Received message {}".format(body))

@@ -24,18 +24,17 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]
 
 
 def create_user(db: Session, user: schema.User) -> models.User:
-    db_user = models.User(username=user.username, phone=user.phone, active=True, hash=user.hash, pics=None)
+    db_user = models.User(
+        username=user.username, phone=user.phone, active=True, hash=user.hash, pics=None
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
+
 def update_user(db: Session, user: schema.User) -> models.User | None:
-    db_user = (
-        db.query(models.User)
-        .filter(models.User.phone == user.phone)
-        .first()
-    )
+    db_user = db.query(models.User).filter(models.User.phone == user.phone).first()
 
     if db_user is None:
         return None
@@ -45,6 +44,7 @@ def update_user(db: Session, user: schema.User) -> models.User | None:
     db.commit()
 
     return db_user
+
 
 def get_reg(db: Session, phone: str) -> models.Registration | None:
     return (
@@ -86,7 +86,7 @@ def create_pic(db: Session, username: str, file: UploadFile) -> models.Pic:
     p = get_current_prompt(db)
     fileBytes = file.file.read()
     pic = models.Pic(data=fileBytes, format=file.content_type, user=username, prompt=p)
-    
+
     db.add(pic)
     db.commit()
     db.refresh(pic)

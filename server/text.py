@@ -11,12 +11,17 @@ BASE_URL = "https://snapshot.lieber.men/u/"
 SNAPSHOT = "Snapshot 📸: "
 
 HOW_TO_START = SNAPSHOT + "Text START to play."
-ENTER_USERNAME = SNAPSHOT + "Text STOP to unsubscribe. To finish registering, please enter your username:"
+ENTER_USERNAME = (
+    SNAPSHOT
+    + "Text STOP to unsubscribe. To finish registering, please enter your username:"
+)
 ENTER_USERNAME_AGAIN = SNAPSHOT + "please enter your username:"
-CONFIRM_USERNAME = SNAPSHOT + "You entered \"{}\", text YES to confirm or NO to change."
-REGISTRATION_SUCCESSFUL = SNAPSHOT + "You've successfully registered as \"{}\". Thanks! :)"
+CONFIRM_USERNAME = SNAPSHOT + 'You entered "{}", text YES to confirm or NO to change.'
+REGISTRATION_SUCCESSFUL = (
+    SNAPSHOT + 'You\'ve successfully registered as "{}". Thanks! :)'
+)
 UNSUBSCRIBED = SNAPSHOT + "You've successfully unsubscribed. Text START to resubscribe."
-PROMPT = SNAPSHOT + "\n✨{prompt}✨\n\nWeek {week} {year}\nSTOP to unsubscribe."
+PROMPT = SNAPSHOT + "\n\n✨{prompt}✨\n\nWeek {week} {year}\nSTOP to unsubscribe."
 
 STOP_KEYWORDS = ["STOP", "UNSUBSCRIBE", "OPTOUT"]
 START_KEYWORDS = ["START", "PLAY", "OPTIN", "SUBSCRIBE", "RESUBSCRIBE"]
@@ -24,13 +29,15 @@ START_KEYWORDS = ["START", "PLAY", "OPTIN", "SUBSCRIBE", "RESUBSCRIBE"]
 POSITIVE_KEYWORDS = ["YES", "Y", "YE", "YEAH", "YEA", "CONFIRM", "YEP"]
 NEGATIVE_KEYWORDS = ["NO", "N", "NOPE", "NAY", "NAH"]
 
-def contains(text: str, words: [str], ignore_case = True):
+
+def contains(text: str, words: [str], ignore_case=True):
     for word in words:
         if word in text:
             return True
         if ignore_case and word.lower() in text.lower():
             return True
     return False
+
 
 class TextInterface(ABC):
     def __init__(self):
@@ -39,7 +46,7 @@ class TextInterface(ABC):
     @abstractmethod
     def send_message(self, to: str, text: str):
         pass
-    
+
     @abstractmethod
     def receive_message(self, from_: str, text: str):
         pass
@@ -55,7 +62,15 @@ class TextInterface(ABC):
 
         if contains(text, STOP_KEYWORDS):
             if user is not None:
-                update_user(self.db, User(phone=user.phone, username=user.username, active=False, hash=user.hash))
+                update_user(
+                    self.db,
+                    User(
+                        phone=user.phone,
+                        username=user.username,
+                        active=False,
+                        hash=user.hash,
+                    ),
+                )
             self.send_message(from_, UNSUBSCRIBED)
 
         elif reg.state == 0 and contains(text, START_KEYWORDS):
@@ -72,8 +87,19 @@ class TextInterface(ABC):
         elif reg.state == 2 and contains(text, POSITIVE_KEYWORDS):
             user_hash = super_good_hash(reg.username)
             print(user_hash)
-            create_user(self.db, User(phone=from_, username=reg.username, active=True, hash=super_good_hash(reg.username), pics=None))
-            update_reg(self.db, Registration(phone=from_, username=reg.username, state=3))
+            create_user(
+                self.db,
+                User(
+                    phone=from_,
+                    username=reg.username,
+                    active=True,
+                    hash=super_good_hash(reg.username),
+                    pics=None,
+                ),
+            )
+            update_reg(
+                self.db, Registration(phone=from_, username=reg.username, state=3)
+            )
             self.send_message(from_, REGISTRATION_SUCCESSFUL.format(reg.username))
 
         elif reg.state == 2 and contains(text, NEGATIVE_KEYWORDS):
@@ -85,7 +111,7 @@ class TextInterface(ABC):
 
     def get_random_prompt(self):
         pass
-    
+
     def send_prompts(self):
         users = get_users(self.db, 0, 1000)
         for user in users:

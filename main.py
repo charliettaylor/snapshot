@@ -28,7 +28,7 @@ from typing import Generator, Optional
 import logging
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     filename="app.log",
     filemode="a",
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -99,7 +99,7 @@ def images_page(
     )
 
 
-@app.get("/v/{user_hash}/history", response_class=HTMLResponse)
+@app.get("/h/{user_hash}", response_class=HTMLResponse)
 def history_page(user_hash: str, db: Session = Depends(get_db)):
     pics = crud.get_pics_by_hash(db, user_hash)
     html_list = []

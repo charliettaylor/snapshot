@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     twilio_phone_number: str
     hash_secret: str
     admin_pass: str
+    db_name: str
 
     class Config:
         env_file = ".env"

@@ -1,7 +1,7 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, true
-from sqlalchemy.orm import relationship, Mapped
 from typing import Optional
 
+from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String, true
+from sqlalchemy.orm import Mapped, relationship
 
 from database import Base
 

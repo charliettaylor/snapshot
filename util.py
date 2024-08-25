@@ -1,8 +1,10 @@
-from config import settings
 import hashlib
+from typing import List
+
+from config import settings
 
 
-def contains(text: str, words: [str], ignore_case=True):
+def contains(text: str, words: List[str], ignore_case=True):
     for word in words:
         if word in text:
             return True
@@ -11,7 +13,7 @@ def contains(text: str, words: [str], ignore_case=True):
     return False
 
 
-def user_hash(username):
+def user_hash(username: str) -> str:
     combined_str = username + settings.hash_secret
     hash_obj = hashlib.md5()
     hash_obj.update(combined_str.encode("utf-8"))
@@ -20,7 +22,7 @@ def user_hash(username):
     return alphanumeric_hash[:6]
 
 
-def validate_username(username):
+def validate_username(username: str) -> bool:
     if len(username) > 15:
         return False
     return username.isalnum()

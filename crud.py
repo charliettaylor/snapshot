@@ -1,11 +1,10 @@
 from datetime import datetime
 from typing import List
 
-from click import prompt
-from models import *
 from sqlalchemy.orm import Session
-from fastapi import UploadFile
+
 import util
+from models import *
 
 
 def get_user(db: Session, username: str) -> User | None:

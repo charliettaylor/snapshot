@@ -1,31 +1,18 @@
-from fastapi import (
-    Depends,
-    FastAPI,
-    HTTPException,
-    UploadFile,
-    Form,
-    Response,
-    Request,
-    Body,
-)
+import logging
+from typing import Optional
+
+from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from twilio.twiml.messaging_response import MessagingResponse
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from twilio.twiml.messaging_response import MessagingResponse
 
 import crud
 import models
-from config import settings
-from database import SessionLocal, engine, get_db
-from sms import SmsClient
-from database import engine, get_db
-
 from constants import *
-
-from datetime import datetime
-from typing import Generator, Optional
-import logging
+from database import engine, get_db
+from sms import SmsClient
 
 logging.basicConfig(
     level=logging.INFO,
@@ -95,7 +82,9 @@ def images_page(
     date_str = prompt.date.strftime("%b %-d, %Y")
 
     return templates.TemplateResponse(
-        request=request, name="gallery.html", context={"pics": pics, "prompt": prompt.prompt, "date": date_str}
+        request=request,
+        name="gallery.html",
+        context={"pics": pics, "prompt": prompt.prompt, "date": date_str},
     )
 
 

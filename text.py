@@ -1,12 +1,11 @@
+import logging
 from abc import ABC, abstractmethod
 
-import logging
-
-from database import get_db
-from models import Registration, User
 from config import settings
-from crud import *
 from constants import *
+from crud import *
+from database import get_db
+from models import User
 from util import *
 
 logger = logging.getLogger(__name__)
@@ -24,7 +23,7 @@ class TextInterface(ABC):
     def receive_message(self, from_: str, text: str):
         pass
 
-    def handle_message(self, from_: str, text: str):
+    def handle_message(self, from_: str, text: str) -> None:
         logger.info("handle_message %s %s", from_, text)
 
         if settings.admin_pass in text:
@@ -32,9 +31,7 @@ class TextInterface(ABC):
             return
 
         reg = get_reg(self.db, from_)
-        logger.info(
-            "handle_message reg %s", vars(reg) if reg is not None else str(reg)
-        )
+        logger.info("handle_message reg %s", vars(reg) if reg is not None else str(reg))
         if reg is None:
             logger.info("handle_message create_reg %s", from_)
             reg = create_reg(self.db, from_)
@@ -84,7 +81,7 @@ class TextInterface(ABC):
             update_reg(self.db, from_, 1)
             self.send_message(from_, ENTER_USERNAME_AGAIN)
 
-    def handle_image(self, from_: str, url: str):
+    def handle_image(self, from_: str, url: str) -> None:
         logger.info("handle_image %s %s", from_, url)
 
         user = get_user_by_phone(self.db, from_)
@@ -110,22 +107,22 @@ class TextInterface(ABC):
                 from_, VIEW_SUBMISSIONS.format(self.generate_url(user.hash))
             )
 
-    def handle_admin_message(self, text: str):
+    def handle_admin_message(self, text: str) -> None:
         prompt_text = " ".join(text.split(" ")[1:])
         logger.info("handle_admin_message %s", prompt_text)
         create_prompt(self.db, prompt_text)
         self.send_prompts(prompt_text)
 
-    def send_prompts(self, prompt_text: str):
+    def send_prompts(self, prompt_text: str) -> None:
         users = get_users(self.db, 0, 1000)
         logger.info("send_prompts %d %s", len(users), prompt_text)
         for user in users:
             self.send_prompt(user.phone, prompt_text)
 
-    def send_prompt(self, phone: str, prompt_text: str):
+    def send_prompt(self, phone: str, prompt_text: str) -> None:
         logger.info("send_prompt %s %s", phone, prompt_text)
         msg = PROMPT.format(prompt=prompt_text)
         self.send_message(phone, msg)
 
-    def generate_url(self, user_hash: str):
+    def generate_url(self, user_hash: str) -> str:
         return BASE_URL + "v/" + user_hash

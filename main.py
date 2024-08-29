@@ -8,9 +8,10 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from twilio.twiml.messaging_response import MessagingResponse
 
-import crud
 import models
+from config import settings
 from constants import *
+from crud import Crud
 from database import engine, get_db
 from sms import SmsClient
 
@@ -26,8 +27,12 @@ logger = logging.getLogger(__name__)
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-twilio_client = SmsClient()
+db = next(get_db(), None)
+if db is None:
+    raise Exception("Could not connect to database")
+twilio_client = SmsClient(db, settings)
 templates = Jinja2Templates(directory="templates")
+crud = Crud()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

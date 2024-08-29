@@ -1,10 +1,16 @@
 from typing import override
 
-from config import settings
+from sqlalchemy.orm import Session
+
+from config import Settings, settings
+from crud import Crud
 from text import TextInterface
 
 
-class TestClient(TextInterface):
+class TextTestClient(TextInterface):
+    def __init__(self, session: Session, settings: Settings, crud: Crud):
+        super().__init__(session, settings, crud)
+
     @override
     def send_message(self, to: str, text: str):
         print(to, "{}: {}".format(settings.twilio_phone_number, text))
@@ -16,7 +22,7 @@ class TestClient(TextInterface):
 
 
 if __name__ == "__main__":
-    client = TestClient()
+    client = TextTestClient()
 
     while True:
         text = input()

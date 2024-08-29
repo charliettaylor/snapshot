@@ -53,31 +53,38 @@ class TextInterface(ABC):
                     ),
                 )
             self.send_message(from_, UNSUBSCRIBED)
+        elif reg.state == 0: 
+            self.reg_state_0(from_, text)
+        elif reg.state == 1:
+            self.reg_state_1(from_, text)
+        elif reg.state == 2:
+            self.reg_state_2(from_, text, reg)
 
-        elif reg.state == 0 and contains(text, START_KEYWORDS):
+
+    def reg_state_0(self, from_: str, text: str) -> None:
+        if contains(text, START_KEYWORDS):
             update_reg(self.db, from_, 1)
             self.send_message(from_, ENTER_USERNAME)
-
-        elif reg.state == 0:
+        else:
             self.send_message(from_, HOW_TO_START)
 
-        elif reg.state == 1:
-            if not util.validate_username(text):
-                self.send_message(from_, BAD_USERNAME)
-                return
-            update_reg(self.db, from_, 2, text)
+    def reg_state_1(self, from_: str, text: str) -> None:
+        if not util.validate_username(text):
+            self.send_message(from_, BAD_USERNAME)
+            return
 
-            self.send_message(from_, CONFIRM_USERNAME.format(text))
+        update_reg(self.db, from_, 2, text)
+        self.send_message(from_, CONFIRM_USERNAME.format(text))
 
-        elif reg.state == 2 and contains(text, POSITIVE_KEYWORDS):
+    def reg_state_2(self, from_: str, text: str, reg: Registration) -> None:
+        if contains(text, POSITIVE_KEYWORDS):
             create_user(self.db, from_, reg.username)
             update_reg(self.db, from_, 3, reg.username)
             self.send_message(from_, REGISTRATION_SUCCESSFUL.format(reg.username))
             prompt = get_current_prompt(self.db)
             if prompt is not None:
                 self.send_prompt(from_, prompt.prompt)
-
-        elif reg.state == 2 and contains(text, NEGATIVE_KEYWORDS):
+        elif contains(text, NEGATIVE_KEYWORDS):
             update_reg(self.db, from_, 1)
             self.send_message(from_, ENTER_USERNAME_AGAIN)
 
@@ -85,26 +92,22 @@ class TextInterface(ABC):
         logger.info("handle_image %s %s", from_, url)
 
         user = get_user_by_phone(self.db, from_)
-
         if user is None:
             self.send_message(from_, INVALID_USER)
             return
 
         prompt = get_current_prompt(self.db)
-
         exists = get_submission_status(self.db, user.hash, prompt.id)
-
         if exists:
             self.send_message(from_, ALREADY_SUBMITTED)
             return
 
         pic = create_pic(self.db, url, prompt.id, user.username)
-
         if pic is None:
             self.send_message(from_, FAILED_PIC_SAVE)
         else:
             self.send_message(
-                from_, VIEW_SUBMISSIONS.format(self.generate_url(user.hash))
+                from_, VIEW_SUBMISSIONS.format(self.generate_view_url(user.hash))
             )
 
     def handle_admin_message(self, text: str) -> None:
@@ -124,5 +127,5 @@ class TextInterface(ABC):
         msg = PROMPT.format(prompt=prompt_text)
         self.send_message(phone, msg)
 
-    def generate_url(self, user_hash: str) -> str:
+    def generate_view_url(self, user_hash: str) -> str:
         return BASE_URL + "v/" + user_hash

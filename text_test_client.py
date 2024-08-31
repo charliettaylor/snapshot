@@ -20,6 +20,10 @@ class TextTestClient(TextInterface):
         print(from_, text)
         self.handle_message(from_, text)
 
+    @override
+    def handle_dev_message(self, from_: str, text: str):
+        prompt_text = " ".join(text.split(" ")[1:])
+        return prompt_text
 
 if __name__ == "__main__":
     client = TextTestClient()

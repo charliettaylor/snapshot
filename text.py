@@ -20,14 +20,24 @@ class TextInterface(ABC):
 
     @abstractmethod
     def send_message(self, to: str, text: str):
+        logger.info("unimplemented call of send_message")
         pass
 
     @abstractmethod
     def receive_message(self, from_: str, text: str):
+        logger.info("unimplemented call of receive_message")
+        pass
+
+    @abstractmethod
+    def handle_dev_message(self, from_: str, text: str):
+        logger.info("unimplemented call of handle_dev_message")
         pass
 
     def handle_message(self, from_: str, text: str) -> None:
         logger.info("handle_message %s %s", from_, text)
+
+        if self.settings.dev_code in text:
+            text = self.handle_dev_message(from_, text)
 
         if self.settings.admin_pass in text:
             self.handle_admin_message(text)
@@ -87,7 +97,6 @@ class TextInterface(ABC):
             if prompt is not None:
                 self.send_prompt(from_, prompt.prompt)
         elif contains(text, NEGATIVE_KEYWORDS):
-
             self.crud.update_reg(self.db, from_, 1)
             self.send_message(from_, ENTER_USERNAME_AGAIN)
 

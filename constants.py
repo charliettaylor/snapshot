@@ -28,3 +28,6 @@ ALREADY_SUBMITTED = SNAPSHOT + "You already submitted for this prompt."
 FAILED_PIC_SAVE = SNAPSHOT + "Couldn't save your pic, oops!"
 
 VIEW_SUBMISSIONS = SNAPSHOT + "Thanks for submitting! View all submissions here:\n{}"
+
+PROD_ENV = "PROD"
+DEV_ENV = "DEV"

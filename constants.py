@@ -3,7 +3,11 @@ from config import settings
 PROD_ENV = "PROD"
 DEV_ENV = "DEV"
 
-BASE_URL = "https://snapshot.lieber.men/"
+BASE_URL = (
+    "https://snapshot.lieber.men/"
+    if settings.environment == PROD_ENV
+    else "http://localhost:8000/"
+)
 
 NAME = "Snapshot"
 EMOJI = "📸" if settings.environment == PROD_ENV else "📷"
@@ -21,10 +25,8 @@ BAD_USERNAME = (
 REGISTRATION_SUCCESSFUL = (
     SNAPSHOT + 'You\'ve successfully registered as "{}". Thanks! :)'
 )
-UNSUBSCRIBED = SNAPSHOT + "You've successfully unsubscribed. Text START to resubscribe."
 PROMPT = SNAPSHOT_MULTI_LINE + "\n\n✨{prompt}✨\n\nSTOP to unsubscribe."
 
-STOP_KEYWORDS = ["STOP", "UNSUBSCRIBE", "OPTOUT"]
 START_KEYWORDS = ["START", "PLAY", "OPTIN", "SUBSCRIBE", "RESUBSCRIBE"]
 
 POSITIVE_KEYWORDS = ["YES", "Y", "YE", "YEAH", "YEA", "CONFIRM", "YEP"]

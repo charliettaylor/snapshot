@@ -1,12 +1,10 @@
 import logging
-from typing import Optional
+from typing import Annotated, Optional
 
-from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response
+from fastapi import Cookie, FastAPI, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from SmsClient import SmsClient
-from sqlalchemy.orm import Session
 from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse
 
@@ -14,6 +12,7 @@ import models
 from config import settings
 from constants import *
 from database import Database, engine
+from SmsClient import SmsClient
 
 logging.basicConfig(
     level=logging.INFO,
@@ -95,6 +94,9 @@ def images_page(
         raise HTTPException(status_code=401, detail="No submission for this prompt")
 
     pics = db.get_pics_by_prompt(n)
+    pics = [vars(pic) for pic in pics]
+    for pic in pics:
+        pic["click_url"] = pic["url"]
 
     date_str = prompt.date.strftime("%b %-d, %Y")
 
@@ -127,3 +129,65 @@ def history_page(user_hash: str):
     """.format(
         "".join(html_list)
     )
+
+
+@app.get("/admin", response_class=HTMLResponse)
+def admin_page(request: Request, password: Annotated[str | None, Cookie()] = None):
+    if not is_logged_in(password):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    prompts = db.get_all_prompts()
+    prompts = [vars(prompt) for prompt in prompts]
+    for prompt in prompts:
+        prompt["url"] = BASE_URL + "a?n={}".format(prompt["id"])
+
+    return templates.TemplateResponse(
+        request=request,
+        name="admin.html",
+        context={"prompts": prompts},
+    )
+
+
+@app.get("/a", response_class=HTMLResponse)
+def winner_admin_page(
+    request: Request,
+    n: Optional[int] = None,
+    password: Annotated[str | None, Cookie()] = None,
+):
+    if not is_logged_in(password):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    prompt = None
+    if n is None:
+        prompt = db.get_current_prompt()
+        n = prompt.id
+    else:
+        prompt = db.get_prompt(n)
+
+    pics = db.get_pics_by_prompt(n)
+    pics = [vars(pic) for pic in pics]
+    for pic in pics:
+        pic["click_url"] = BASE_URL + "win/{}".format(pic["id"])
+
+    date_str = prompt.date.strftime("%b %-d, %Y")
+
+    return templates.TemplateResponse(
+        request=request,
+        name="gallery.html",
+        context={"pics": pics, "prompt": prompt.prompt, "date": date_str},
+    )
+
+
+@app.get("/win/{pic_id}")
+def set_winner(pic_id: int, password: Annotated[str | None, Cookie()] = None):
+    if not is_logged_in(password):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    if db.set_winner(pic_id) is not None:
+        return "Winner set"
+
+    raise HTTPException(status_code=404, detail="Pic not found")
+
+
+def is_logged_in(password: str):
+    return password == settings.admin_pass

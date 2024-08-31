@@ -107,6 +107,9 @@ class Database:
         self.db.refresh(self.db_prompt)
         return self.db_prompt
 
+    def get_all_prompts(self) -> List[Prompt]:
+        return self.db.query(Prompt).all()
+
     def get_pic(self, username: str, prompt_id: int):
         return (
             self.db.query(Pic)
@@ -126,11 +129,11 @@ class Database:
         )
 
     def get_submission_status(self, user_hash: str, prompt_id: int) -> bool:
-        user = self.get_user_by_hash(self.db, user_hash)
+        user = self.get_user_by_hash(user_hash)
         print(user_hash)
         if user is None:
             return False
-        pic = self.get_pic(self.db, user.username, prompt_id)
+        pic = self.get_pic(user.username, prompt_id)
 
         return pic is not None
 
@@ -145,3 +148,13 @@ class Database:
         self.db.refresh(picModel)
 
         return picModel
+
+    def set_winner(self, pic_id: int):
+        pic = self.db.query(Pic).filter(Pic.id == pic_id).first()
+
+        if pic is None:
+            return None
+
+        pic.winner = not pic.winner
+        self.db.commit()
+        return pic

@@ -3,8 +3,8 @@ from typing import override
 from sqlalchemy.orm import Session
 
 from Client import Client
-from database import Database
 from config import Settings, settings
+from database import Database
 
 
 class TestClient(Client):

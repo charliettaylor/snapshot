@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal</title>
+</head>
+
+<body>
+    <h1>Admin Shit</h1>
+
+    <ul>
+        <li>
+            Send prompt: <input type="text" id="prompt" name="prompt" /> <button>Send</button>
+        </li>
+        <li>Other stuff...</li>
+    </ul>
+
+    Select winners:
+    <ul>
+        {% for prompt in prompts %}
+        <li>
+            <a href="{{prompt.url}}">
+                {{prompt.id}} - {{prompt.prompt}}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

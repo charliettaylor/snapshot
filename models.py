@@ -1,7 +1,7 @@
 from typing import Optional
 
 from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String
-from sqlalchemy.orm import Mapped, relationship, declarative_base
+from sqlalchemy.orm import Mapped, declarative_base, relationship
 
 Base = declarative_base()
 

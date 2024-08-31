@@ -22,14 +22,14 @@
         {% for pic in pics %}
         {% if pic.winner %}
         <li>
-            <a href="{{pic.url}}">
+            <a href="{{pic.click_url}}">
                 <img src="{{pic.url}}" class="winner" />
             </a>
             <p style="padding-top: 0.25rem;">@{{pic.user}}</p>
         </li>
         {% else %}
         <li>
-            <a href="{{pic.url}}">
+            <a href="{{pic.click_url}}">
                 <img src="{{pic.url}}" />
             </a>
             <p style="padding-top: 0.25rem;">@{{pic.user}}</p>

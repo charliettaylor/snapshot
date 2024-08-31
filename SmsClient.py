@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 from twilio.rest import Client as TwilioClient
 
 from Client import Client
-from database import Database
 from config import Settings, settings
 from constants import DEV_ENV
+from database import Database
 
 logger = logging.getLogger(__name__)
 

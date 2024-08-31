@@ -124,5 +124,5 @@ class Client(ABC):
         msg = PROMPT.format(prompt=prompt_text)
         self.send_message(phone, msg)
 
-    def generate_view_url(self, user_hash: str) -> str:
-        return BASE_URL + "v/" + user_hash
+    def generate_view_url(self, user_hash: str, n: int) -> str:
+        return BASE_URL + "v/" + user_hash + "?n=" + str(n)

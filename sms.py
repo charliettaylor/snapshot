@@ -1,14 +1,16 @@
 from typing import override
 
+from sqlalchemy.orm import Session
 from twilio.rest import Client
 
-from config import settings
+from config import Settings, settings
+from crud import Crud
 from text import TextInterface
 
 
 class SmsClient(TextInterface):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, session: Session, settings: Settings):
+        super().__init__(session, settings)
         self.client = Client(settings.twilio_account_sid, settings.twilio_auth_token)
 
     @override

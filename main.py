@@ -57,7 +57,7 @@ async def receive_message(
     MediaUrl0: Optional[str] = Form(None),
 ):
     # Validate that the request is coming from twilio
-    validator = RequestValidator(config.twilio_auth_token)
+    validator = RequestValidator(settings.twilio_auth_token)
     form_ = await request.form()
     if not validator.validate(
         str(request.url), form_, request.headers.get("X-Twilio-Signature", "")

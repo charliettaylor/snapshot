@@ -34,10 +34,10 @@ class SmsClient(Client):
     def handle_dev_message(self, from_: str, text: str) -> str:
         prompt_text = " ".join(text.split(" ")[1:])
         logger.info("handle_dev_message %s", prompt_text)
-        if config.environment != DEV_ENV:
+        if self.settings.environment != DEV_ENV:
             logger.info("text routed to dev env")
             raise HTTPException(status_code=501, detail="dev code detected.")
-        if from_ not in config.dev_allowlist.split(","):
+        if from_ not in self.settings.dev_allowlist.split(","):
             logger.info(
                 "%s attempted to use DEV environment but was not allowlisted.", from_
             )

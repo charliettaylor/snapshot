@@ -1,7 +1,14 @@
+from config import settings
+
+PROD_ENV = "PROD"
+DEV_ENV = "DEV"
+
 BASE_URL = "https://snapshot.lieber.men/"
 
-SNAPSHOT = "Snapshot 📸: "
-SNAPSHOT_MULTI_LINE = "Snapshot 📸"
+NAME = "Snapshot"
+EMOJI = "📸" if settings.environment == PROD_ENV else "📷"
+SNAPSHOT = NAME + " " + EMOJI + ": "
+SNAPSHOT_MULTI_LINE = NAME + " " + EMOJI
 
 HOW_TO_START = SNAPSHOT + "Text START to play."
 ENTER_USERNAME = SNAPSHOT + "Text STOP to unsubscribe.\n\nPlease enter your username:"
@@ -28,6 +35,3 @@ ALREADY_SUBMITTED = SNAPSHOT + "You already submitted for this prompt."
 FAILED_PIC_SAVE = SNAPSHOT + "Couldn't save your pic, oops!"
 
 VIEW_SUBMISSIONS = SNAPSHOT + "Thanks for submitting! View all submissions here:\n{}"
-
-PROD_ENV = "PROD"
-DEV_ENV = "DEV"

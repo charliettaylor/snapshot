@@ -48,10 +48,14 @@ h3 {
 }
 
 .winner {
-    border: medium solid gold;
+    border: thin solid gold;
+
+    -moz-box-shadow: 0 0 0.5rem gold;
+    -webkit-box-shadow: 0 0 0.5rem gold;
+    box-shadow: 0px 0px 0.7rem rgba(255, 215, 0, 0.8);
 }
 
-p {
+span {
     color: gray;
 
     font-family: "Merriweather", serif;
@@ -59,4 +63,10 @@ p {
     font-style: normal;
 
     font-size: small;
+}
+
+.pic-text {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.25rem;
 }

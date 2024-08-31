@@ -25,14 +25,19 @@
             <a href="{{pic.click_url}}">
                 <img src="{{pic.url}}" class="winner" />
             </a>
-            <p style="padding-top: 0.25rem;">@{{pic.user}}</p>
+            <div class="pic-text">
+                <span>@{{pic.user}}</span>
+                <span>Editor's choice</span>
+            </div>
         </li>
         {% else %}
         <li>
             <a href="{{pic.click_url}}">
                 <img src="{{pic.url}}" />
             </a>
-            <p style="padding-top: 0.25rem;">@{{pic.user}}</p>
+            <div class="pic-text">
+                <span>@{{pic.user}}</span>
+            </div>
         </li>
         {% endif %}
         {% endfor %}

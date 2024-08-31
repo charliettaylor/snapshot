@@ -2,14 +2,14 @@ from typing import override
 
 from sqlalchemy.orm import Session
 
+from Client import Client
+from database import Database
 from config import Settings, settings
-from crud import Crud
-from text import TextInterface
 
 
-class TextTestClient(TextInterface):
-    def __init__(self, session: Session, settings: Settings, crud: Crud):
-        super().__init__(session, settings, crud)
+class TestClient(Client):
+    def __init__(self, settings: Settings, db: Database | None = None):
+        super().__init__(settings, db)
 
     @override
     def send_message(self, to: str, text: str):
@@ -27,7 +27,7 @@ class TextTestClient(TextInterface):
 
 
 if __name__ == "__main__":
-    client = TextTestClient()
+    client = TextClient()
 
     while True:
         text = input()

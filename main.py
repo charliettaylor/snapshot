@@ -5,15 +5,15 @@ from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from SmsClient import SmsClient
 from sqlalchemy.orm import Session
+from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse
 
 import models
 from config import settings
 from constants import *
-from crud import Crud
-from database import engine, get_db
-from sms import SmsClient
+from database import Database, engine
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,12 +27,9 @@ logger = logging.getLogger(__name__)
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-db = next(get_db(), None)
-if db is None:
-    raise Exception("Could not connect to database")
-twilio_client = SmsClient(db, settings)
+twilio_client = SmsClient(settings)
 templates = Jinja2Templates(directory="templates")
-crud = Crud()
+db = Database()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -52,19 +49,31 @@ def read_root():
 
 
 @app.post("/sms")
-def receive_message(
+async def receive_message(
+    request: Request,
     From: Optional[str] = Form(None),
     Body: Optional[str] = Form(None),
     MediaContentType0: Optional[str] = Form(None),
     MediaUrl0: Optional[str] = Form(None),
 ):
+    # Validate that the request is coming from twilio
+    validator = RequestValidator(config.twilio_auth_token)
+    form_ = await request.form()
+    if not validator.validate(
+        str(request.url), form_, request.headers.get("X-Twilio-Signature", "")
+    ):
+        raise HTTPException(status_code=400, detail="Error in Twilio Signature")
     logger.info(
         "/sms %s %s %s %s", str(From), str(Body), str(MediaContentType0), str(MediaUrl0)
     )
+
     if MediaContentType0 is not None and "image" in MediaContentType0:
         twilio_client.handle_image(From, MediaUrl0)
     else:
         twilio_client.handle_message(From, Body)
+
+    # Empty MessageResponse means don't send a response
+    # handle_message will send the reply instead
     response = MessagingResponse()
     return Response(content=str(response), media_type="application/xml")
 
@@ -74,19 +83,18 @@ def images_page(
     user_hash: str,
     request: Request,
     n: Optional[int] = None,
-    db: Session = Depends(get_db),
 ):
     prompt = None
     if n is not None:
-        prompt = crud.get_prompt(db, n)
+        prompt = db.get_prompt(n)
     else:
-        prompt = crud.get_current_prompt(db)
+        prompt = db.get_current_prompt()
         n = prompt.id
 
-    if not crud.get_submission_status(db, user_hash, n):
+    if not db.get_submission_status(user_hash, n):
         raise HTTPException(status_code=401, detail="No submission for this prompt")
 
-    pics = crud.get_pics_by_prompt(db, n)
+    pics = db.get_pics_by_prompt(n)
 
     date_str = prompt.date.strftime("%b %-d, %Y")
 
@@ -98,11 +106,11 @@ def images_page(
 
 
 @app.get("/h/{user_hash}", response_class=HTMLResponse)
-def history_page(user_hash: str, db: Session = Depends(get_db)):
-    pics = crud.get_pics_by_hash(db, user_hash)
+def history_page(user_hash: str):
+    pics = db.get_pics_by_hash(user_hash)
     html_list = []
     for pic in pics:
-        prompt = crud.get_prompt(db, pic.prompt)
+        prompt = db.get_prompt(pic.prompt)
         url = BASE_URL + "{}?n={}".format(user_hash, prompt.id)
         html_list.append('<li><a href="{}">{}</a></li>'.format(url, prompt.prompt))
 

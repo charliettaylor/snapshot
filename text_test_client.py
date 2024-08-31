@@ -25,6 +25,7 @@ class TextTestClient(TextInterface):
         prompt_text = " ".join(text.split(" ")[1:])
         return prompt_text
 
+
 if __name__ == "__main__":
     client = TextTestClient()
 

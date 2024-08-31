@@ -54,19 +54,7 @@ class TextInterface(ABC):
             "handle_message user %s", vars(user) if user is not None else str(user)
         )
 
-        if contains(text, STOP_KEYWORDS):
-            if user is not None:
-                self.crud.update_user(
-                    self.db,
-                    User(
-                        phone=user.phone,
-                        username=user.username,
-                        active=False,
-                        hash=user.hash,
-                    ),
-                )
-            self.send_message(from_, UNSUBSCRIBED)
-        elif reg.state == 0:
+        if reg.state == 0:
             self.reg_state_0(from_, text)
         elif reg.state == 1:
             self.reg_state_1(from_, text)

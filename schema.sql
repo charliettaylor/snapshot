@@ -24,6 +24,7 @@ CREATE TABLE pics (
     url TEXT NOT NULL,
     prompt INTEGER NOT NULL,
     user TEXT NOT NULL,
+    winner INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY(prompt) REFERENCES prompts(id),
     FOREIGN KEY(user) REFERENCES users(username)
 );

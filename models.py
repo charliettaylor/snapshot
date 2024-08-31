@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String, true
+from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, relationship
 
 from database import Base
@@ -42,6 +42,7 @@ class Pic(Base):
     url = Column(String)
     prompt = Column(Integer, ForeignKey("prompts.id"))
     user = Column(String, ForeignKey("users.username"))
+    winner = Column(Boolean, default=False)
 
     parent = relationship("Prompt", back_populates="pics")
     uploader = relationship("User", back_populates="pics")

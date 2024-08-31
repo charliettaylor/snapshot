@@ -1,4 +1,3 @@
-import re
 from unittest.mock import MagicMock
 
 from config import settings

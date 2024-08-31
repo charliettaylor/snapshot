@@ -93,7 +93,7 @@ class Crud:
         return db.query(Pic).filter(Pic.user == user.username)
 
     def get_pics_by_prompt(self, db: Session, prompt_id: int) -> List[Pic]:
-        return db.query(Pic).filter(Pic.prompt == prompt_id)
+        return db.query(Pic).filter(Pic.prompt == prompt_id).order_by(Pic.winner.desc())
 
     def get_submission_status(
         self, db: Session, user_hash: str, prompt_id: int

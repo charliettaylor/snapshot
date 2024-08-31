@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/reset.css">
     <link rel="stylesheet" href="/static/gallery.css">
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <style>
@@ -19,11 +20,21 @@
     </center>
     <ul>
         {% for pic in pics %}
+        {% if pic.winner %}
+        <li>
+            <a href="{{pic.url}}">
+                <img src="{{pic.url}}" class="winner" />
+            </a>
+            <p style="padding-top: 0.25rem;">@{{pic.user}}</p>
+        </li>
+        {% else %}
         <li>
             <a href="{{pic.url}}">
                 <img src="{{pic.url}}" />
             </a>
+            <p style="padding-top: 0.25rem;">@{{pic.user}}</p>
         </li>
+        {% endif %}
         {% endfor %}
     </ul>
 </body>

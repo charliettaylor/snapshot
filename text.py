@@ -87,6 +87,7 @@ class TextInterface(ABC):
             if prompt is not None:
                 self.send_prompt(from_, prompt.prompt)
         elif contains(text, NEGATIVE_KEYWORDS):
+
             self.crud.update_reg(self.db, from_, 1)
             self.send_message(from_, ENTER_USERNAME_AGAIN)
 
@@ -94,6 +95,7 @@ class TextInterface(ABC):
         logger.info("handle_image %s %s", from_, url)
 
         user = self.crud.get_user_by_phone(self.db, from_)
+
         if user is None:
             self.send_message(from_, INVALID_USER)
             return

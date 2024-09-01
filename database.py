@@ -138,7 +138,7 @@ class Database:
         return pic is not None
 
     def create_pic(self, url: str, prompt_id: int, username: str) -> Pic:
-        if self.get_pic(self.db, username, prompt_id) is not None:
+        if self.get_pic(username, prompt_id) is not None:
             return None
 
         picModel = Pic(url=url, prompt=prompt_id, user=username)

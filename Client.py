@@ -102,6 +102,10 @@ class Client(ABC):
             return
 
         prompt = self.db.get_current_prompt()
+
+        if prompt is None:
+            return
+
         exists = self.db.get_submission_status(user.hash, prompt.id)
         if exists:
             self.send_message(from_, ALREADY_SUBMITTED)
@@ -112,7 +116,7 @@ class Client(ABC):
             self.send_message(from_, FAILED_PIC_SAVE)
         else:
             self.send_message(
-                from_, VIEW_SUBMISSIONS.format(self.generate_view_url(user.hash))
+                from_, VIEW_SUBMISSIONS.format(self.generate_view_url(user.hash, prompt.id))
             )
 
     def handle_admin_message(self, text: str) -> None:

@@ -1,4 +1,4 @@
-# Snapshot
+# Snapshot 📸
 
 A simple game with the primary interface being sms
 

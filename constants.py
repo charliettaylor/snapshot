@@ -1,13 +1,14 @@
 from config import settings
 
 PROD_ENV = "PROD"
+BETA_ENV = "BETA"
 DEV_ENV = "DEV"
 
-BASE_URL = (
-    "https://snapshot.lieber.men/"
-    if settings.environment == PROD_ENV
-    else "http://localhost:8000/"
-)
+BASE_URL = "https://snapshot.lieber.men/"
+if settings.environment == BETA_ENV:
+    BASE_URL = "https://dev.snapshot.lieber.men/"
+if settings.environment == DEV_ENV:
+    BASE_URL = "http://localhost:8000/"
 
 NAME = "Snapshot"
 EMOJI = "📸" if settings.environment == PROD_ENV else "📷"

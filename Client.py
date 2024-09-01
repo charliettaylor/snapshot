@@ -26,14 +26,14 @@ class Client(ABC):
         pass
 
     @abstractmethod
-    def handle_dev_message(self, from_: str, text: str):
+    def handle_beta_message(self, from_: str, text: str):
         pass
 
     def handle_message(self, from_: str, text: str) -> None:
         logger.info("handle_message %s %s", from_, text)
 
-        if self.settings.dev_code in text:
-            text = self.handle_dev_message(from_, text)
+        if self.settings.beta_code in text:
+            text = self.handle_beta_message(from_, text)
 
         if self.settings.admin_pass in text:
             self.handle_admin_message(text)

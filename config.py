@@ -11,8 +11,8 @@ class Settings(BaseSettings):
     db_name: str
     hash_secret: str
     admin_pass: str
-    dev_code: str
-    dev_allowlist: str
+    beta_code: str
+    beta_allowlist: str
 
 
 settings = Settings()

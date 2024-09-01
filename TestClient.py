@@ -21,7 +21,7 @@ class TestClient(Client):
         self.handle_message(from_, text)
 
     @override
-    def handle_dev_message(self, from_: str, text: str):
+    def handle_beta_message(self, from_: str, text: str):
         prompt_text = " ".join(text.split(" ")[1:])
         return prompt_text
 

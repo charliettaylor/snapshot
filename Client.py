@@ -116,7 +116,8 @@ class Client(ABC):
             self.send_message(from_, FAILED_PIC_SAVE)
         else:
             self.send_message(
-                from_, VIEW_SUBMISSIONS.format(self.generate_view_url(user.hash, prompt.id))
+                from_,
+                VIEW_SUBMISSIONS.format(self.generate_view_url(user.hash, prompt.id)),
             )
 
     def handle_admin_message(self, text: str) -> None:

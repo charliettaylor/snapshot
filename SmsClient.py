@@ -47,6 +47,7 @@ class SmsClient(Client):
             self.reroute_next_msg_users.remove(from_)
             self.reroute_to_beta(from_)
             return text
+        return text
 
     def reroute_to_beta(self, from_: str):
         if self.settings.environment == PROD_ENV:

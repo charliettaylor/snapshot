@@ -32,8 +32,14 @@ class Client(ABC):
     def handle_message(self, from_: str, text: str) -> None:
         logger.info("handle_message %s %s", from_, text)
 
-        if self.settings.beta_code in text:
-            text = self.handle_beta_message(from_, text)
+        # If the beta code is detected in a message, it will be rerouted to the beta environment
+        # by throwing a 501. The backup webhook (beta env) will instead handle the message
+        text = self.handle_beta_message(from_, text)
+
+        # This value is used by handle_beta_message, or can be used for testing purposes
+        if text == IGNORE_MESSAGE:
+            logger.info("ignoring message...")
+            return
 
         if self.settings.admin_pass in text:
             self.handle_admin_message(text)
@@ -86,6 +92,8 @@ class Client(ABC):
 
     def handle_image(self, from_: str, url: str) -> None:
         logger.info("handle_image %s %s", from_, url)
+
+        self.handle_beta_message(from_, "")
 
         user = self.db.get_user_by_phone(from_)
 

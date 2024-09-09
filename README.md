@@ -45,7 +45,7 @@ fastapi run main.py
 
 Format code before new changes
 ```bash
-black .
+black . && isort .
 ```
 
 ### Beta environment

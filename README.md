@@ -47,3 +47,13 @@ Format code before new changes
 ```bash
 black . && isort .
 ```
+
+### Beta environment
+
+The beta environment allows us to test changes before pushing to production, while still only using a single twilio number.
+In the .env, set the environment to `BETA`, and confirm you have set the `beta_code` and `beta_allowlist`.
+
+In twilio, add a backup message webhook, which points to the beta url.
+
+To route messages to the beta webhook, start any message with the `beta_code`.
+To route images to the beta webhook, first send a single message containing only the `beta_code`. Then, send an image normally.

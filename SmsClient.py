@@ -7,7 +7,7 @@ from twilio.rest import Client as TwilioClient
 
 from Client import Client
 from config import Settings, settings
-from constants import PROD_ENV, IGNORE_MESSAGE
+from constants import IGNORE_MESSAGE, PROD_ENV
 from database import Database
 
 logger = logging.getLogger(__name__)

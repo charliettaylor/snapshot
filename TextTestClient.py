@@ -1,13 +1,11 @@
 from typing import override
 
-from sqlalchemy.orm import Session
-
 from Client import Client
 from config import Settings, settings
 from database import Database
 
 
-class TestClient(Client):
+class TextTestClient(Client):
     def __init__(self, settings: Settings, db: Database | None = None):
         super().__init__(settings, db)
 
@@ -22,12 +20,11 @@ class TestClient(Client):
 
     @override
     def handle_beta_message(self, from_: str, text: str):
-        prompt_text = " ".join(text.split(" ")[1:])
-        return prompt_text
+        return text
 
 
 if __name__ == "__main__":
-    client = TextClient()
+    client = TextTestClient()
 
     while True:
         text = input()

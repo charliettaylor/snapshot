@@ -11,6 +11,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
     </style>
     <title>Snapshot</title>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Snapshot 📸">
+    {% if og.display %}
+    <meta property="og:description" content="Click to see snapshots for '{{prompt}}'. Editor's choice for last prompt shown here!">
+    <meta property="og:image" content="{{og.url}}">
+    {% else %}
+    <meta property="og:description" content="Click to see snapshots for '{{prompt}}'">
+    {% endif %}
 </head>
 
 <body>

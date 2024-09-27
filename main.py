@@ -100,10 +100,16 @@ def images_page(
 
     date_str = prompt.date.strftime("%b %-d, %Y")
 
+    og = {"display": False}
+    winner = db.get_winner_by_prompt(n - 1)
+    if winner is not None:
+        og["display"] = True
+        og["url"] = winner.url
+
     return templates.TemplateResponse(
         request=request,
         name="gallery.html",
-        context={"pics": pics, "prompt": prompt.prompt, "date": date_str},
+        context={"pics": pics, "prompt": prompt.prompt, "date": date_str, "og": og},
     )
 
 
@@ -174,7 +180,12 @@ def winner_admin_page(
     return templates.TemplateResponse(
         request=request,
         name="gallery.html",
-        context={"pics": pics, "prompt": prompt.prompt, "date": date_str},
+        context={
+            "pics": pics,
+            "prompt": prompt.prompt,
+            "date": date_str,
+            "og": {"display": False},
+        },
     )
 
 

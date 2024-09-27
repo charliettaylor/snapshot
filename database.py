@@ -128,6 +128,13 @@ class Database:
             .order_by(Pic.winner.desc())
         )
 
+    def get_winner_by_prompt(self, prompt_id: int) -> List[Pic]:
+        return (
+            self.db.query(Pic)
+            .filter(Pic.prompt == prompt_id, Pic.winner == True)
+            .first()
+        )
+
     def get_submission_status(self, user_hash: str, prompt_id: int) -> bool:
         user = self.get_user_by_hash(user_hash)
         print(user_hash)

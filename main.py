@@ -101,7 +101,7 @@ def images_page(
     date_str = prompt.date.strftime("%b %-d, %Y")
 
     og = {"display": False}
-    winner = db.get_winner_by_prompt(n - 1)
+    winner = db.get_winner_by_prompt(n)
     if winner is not None:
         og["display"] = True
         og["url"] = winner.url

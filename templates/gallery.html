@@ -13,11 +13,9 @@
     <title>Snapshot</title>
     <meta property="og:type" content="website">
     <meta property="og:title" content="Snapshot 📸">
+    <meta property="og:description" content="{{prompt}}">
     {% if og.display %}
-    <meta property="og:description" content="Click to see snapshots for '{{prompt}}'. Editor's choice for last prompt shown here!">
     <meta property="og:image" content="{{og.url}}">
-    {% else %}
-    <meta property="og:description" content="Click to see snapshots for '{{prompt}}'">
     {% endif %}
 </head>
 

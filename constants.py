@@ -4,11 +4,13 @@ PROD_ENV = "PROD"
 BETA_ENV = "BETA"
 DEV_ENV = "DEV"
 
-BASE_URL = "https://snapshot.lieber.men/"
 if settings.environment == BETA_ENV:
-    BASE_URL = "https://dev.snapshot.lieber.men/"
-if settings.environment == DEV_ENV:
-    BASE_URL = "http://localhost:8000/"
+    base_domain = "dev.snapshot.lieber.men/"
+elif settings.environment == DEV_ENV:
+    base_domain = "localhost:8000/"
+else:
+    base_domain = "snapshot.lieber.men/"
+BASE_URL = "https://" + base_domain
 
 NAME = "Snapshot"
 EMOJI = "📸" if settings.environment == PROD_ENV else "📷"

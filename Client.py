@@ -26,7 +26,7 @@ class Client(ABC):
         pass
 
     @abstractmethod
-    def handle_beta_message(self, from_: str, text: str):
+    def handle_beta_message(self, from_: str, text: str) -> str:
         pass
 
     def handle_message(self, from_: str, text: str) -> None:
@@ -65,7 +65,7 @@ class Client(ABC):
 
     def reg_state_0(self, from_: str, text: str) -> None:
         if contains(text, START_KEYWORDS):
-            self.db.update_reg(from_, 1)
+            _ = self.db.update_reg(from_, 1)
             self.send_message(from_, ENTER_USERNAME)
         else:
             self.send_message(from_, HOW_TO_START)
@@ -75,7 +75,7 @@ class Client(ABC):
             self.send_message(from_, BAD_USERNAME)
             return
 
-        self.db.update_reg(from_, 2, text)
+        _ = self.db.update_reg(from_, 2, text)
         self.send_message(from_, CONFIRM_USERNAME.format(text))
 
     def reg_state_2(self, from_: str, text: str, reg: Registration) -> None:
@@ -92,8 +92,6 @@ class Client(ABC):
 
     def handle_image(self, from_: str, url: str) -> None:
         logger.info("handle_image %s %s", from_, url)
-
-        self.handle_beta_message(from_, "")
 
         user = self.db.get_user_by_phone(from_)
 

@@ -2,7 +2,6 @@ import logging
 from typing import override
 
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
 from twilio.rest import Client as TwilioClient
 
 from Client import Client
@@ -19,11 +18,11 @@ class SmsClient(Client):
         self.twilio_client = TwilioClient(
             settings.twilio_account_sid, settings.twilio_auth_token
         )
-        self.reroute_next_msg_users = set()
+        self.reroute_next_msg_users: set[str] = set()
 
     @override
     def send_message(self, to: str, text: str) -> None:
-        self.twilio_client.messages.create(
+        self.twilio_client.messages.create(  # pyright: ignore [reportUnknownMemberType]
             to=to, from_=settings.twilio_phone_number, body=text
         )
 
@@ -40,7 +39,7 @@ class SmsClient(Client):
         elif self.settings.beta_code in text:
             prompt_text = " ".join(text.split(" ")[1:])
             logger.info("handle_beta_message %s", prompt_text)
-            self.reroute_to_beta()
+            self.reroute_to_beta(from_)
             return prompt_text
         elif from_ in self.reroute_next_msg_users:
             logger.info("handle_beta_image")

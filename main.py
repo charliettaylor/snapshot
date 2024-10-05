@@ -66,9 +66,16 @@ async def receive_message(
         "/sms %s %s %s %s", str(From), str(Body), str(MediaContentType0), str(MediaUrl0)
     )
 
-    if MediaContentType0 is not None and "image" in MediaContentType0:
+    if From is None:
+        raise HTTPException(status_code=400, detail="Unable to identify sender")
+
+    if (
+        MediaContentType0 is not None
+        and "image" in MediaContentType0
+        and MediaUrl0 is not None
+    ):
         twilio_client.handle_image(From, MediaUrl0)
-    else:
+    elif Body is not None:
         twilio_client.handle_message(From, Body)
 
     # Empty MessageResponse means don't send a response

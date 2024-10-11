@@ -78,9 +78,6 @@ async def receive_message(
         and MediaUrl0 is not None
     ):
         twilio_client.handle_image(From, MediaUrl0)
-    if MediaContentType0 is not None and "image" in MediaContentType0:
-        assert MediaUrl0 is not None
-        twilio_client.handle_image(From, MediaUrl0)
     elif Body is not None:
         twilio_client.handle_message(From, Body)
 

@@ -138,7 +138,6 @@ class Database:
 
     def get_submission_status(self, user_hash: str, prompt_id: int) -> bool:
         user = self.get_user_by_hash(user_hash)
-        print(user_hash)
         if user is None:
             return False
         pic = self.get_pic(str(user.username), prompt_id)

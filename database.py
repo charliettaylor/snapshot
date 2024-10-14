@@ -162,6 +162,6 @@ class Database:
         if pic is None:
             return None
 
-        pic.winner = ~pic.winner  # pyright: ignore [reportAttributeAccessIssue]
+        pic.winner = not pic.winner  # pyright: ignore [reportAttributeAccessIssue]
         self.db.commit()
         return pic

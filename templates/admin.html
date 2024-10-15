@@ -4,29 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <title>Admin Portal</title>
 </head>
 
 <body>
-    <h1>Admin Shit</h1>
+    <header class="container">
+        <hgroup>
+            <h1>Admin Shit</h1>
+        </hgroup>
+    </header>
+    <main class="container">
+        <section>
+            <div class="grid">
+                <input type="text" id="prompt" placeholder="Send prompt" name="prompt" />
+                <button type="submit">Send</button>
+            </div>
+        </section>
+        <section>
+            <h2>Editor's Choice</h2>
+            <ul style="list-style-type: none;">
+                {% for prompt in prompts %}
+                <li>
+                    <a href="{{prompt.url}}">
+                        {{prompt.id}} - {{prompt.prompt}}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
 
-    <ul>
-        <li>
-            Send prompt: <input type="text" id="prompt" name="prompt" /> <button>Send</button>
-        </li>
-        <li>Other stuff...</li>
-    </ul>
-
-    Select winners:
-    <ul>
-        {% for prompt in prompts %}
-        <li>
-            <a href="{{prompt.url}}">
-                {{prompt.id}} - {{prompt.prompt}}
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+        </section>
+    </main>
+    <footer class="container">
+        <small>Made by Charlie and Aaron</small>
+    </footer>
 </body>
 
 </html>

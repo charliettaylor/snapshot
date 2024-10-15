@@ -4,7 +4,7 @@ import logging
 from typing import Annotated
 
 from fastapi import Cookie, FastAPI, Form, HTTPException, Request, Response
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from twilio.request_validator import RequestValidator
@@ -212,7 +212,7 @@ def set_winner(pic_id: int, password: Annotated[str | None, Cookie()] = None):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     if db.set_winner(pic_id) is not None:
-        return "Winner set"
+        return RedirectResponse(url="/admin", status_code=303)
 
     raise HTTPException(status_code=404, detail="Pic not found")
 

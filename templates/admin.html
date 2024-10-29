@@ -17,10 +17,10 @@
     </header>
     <main class="container">
         <section>
-            <div class="grid">
+            <form action="/prompt" method="post" class="grid">
                 <input type="text" id="prompt" placeholder="Send prompt" name="prompt" />
-                <button type="submit">Send</button>
-            </div>
+                <input type="submit" value="Send"></input>
+            </form>
         </section>
         <section>
             <h2>Editor's Choice</h2>
@@ -33,7 +33,6 @@
                 </li>
                 {% endfor %}
             </ul>
-
         </section>
     </main>
     <footer class="container">

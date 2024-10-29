@@ -216,6 +216,19 @@ def set_winner(pic_id: int, password: Annotated[str | None, Cookie()] = None):
 
     raise HTTPException(status_code=404, detail="Pic not found")
 
+@app.post("/prompt")
+async def create_prompt(request: Request, password: Annotated[str | None, Cookie()] = None) -> RedirectResponse:
+    if not is_logged_in(password):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    body = await request.form()
+    prompt = str(body.get("prompt"))
+    if prompt is None:
+        raise HTTPException(status_code=400, detail="No prompt provided")
+
+    db.create_prompt(prompt)
+ 
+    return RedirectResponse(url="/admin", status_code=303)
 
 def is_logged_in(password: str | None):
     return password is not None and password == settings.admin_pass

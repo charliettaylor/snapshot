@@ -207,7 +207,9 @@ def winner_admin_page(
 
 
 @app.get("/win/{pic_id}")
-def set_winner(pic_id: int, password: Annotated[str | None, Cookie()] = None):
+def set_winner(
+    pic_id: int, password: Annotated[str | None, Cookie()] = None
+) -> RedirectResponse:
     if not is_logged_in(password):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -216,8 +218,11 @@ def set_winner(pic_id: int, password: Annotated[str | None, Cookie()] = None):
 
     raise HTTPException(status_code=404, detail="Pic not found")
 
+
 @app.post("/prompt")
-async def create_prompt(request: Request, password: Annotated[str | None, Cookie()] = None) -> RedirectResponse:
+async def create_prompt(
+    request: Request, password: Annotated[str | None, Cookie()] = None
+) -> RedirectResponse:
     if not is_logged_in(password):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -227,8 +232,9 @@ async def create_prompt(request: Request, password: Annotated[str | None, Cookie
         raise HTTPException(status_code=400, detail="No prompt provided")
 
     db.create_prompt(prompt)
- 
+
     return RedirectResponse(url="/admin", status_code=303)
 
-def is_logged_in(password: str | None):
+
+def is_logged_in(password: str | None) -> bool:
     return password is not None and password == settings.admin_pass

@@ -1,5 +1,3 @@
-# pyright: reportCallInDefaultInitializer=false
-
 import logging
 from typing import Annotated
 
@@ -25,7 +23,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-models.Base.metadata.create_all(bind=engine)  # pyright: ignore [reportAny]
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 twilio_client = SmsClient(settings)
@@ -61,7 +59,7 @@ async def receive_message(
     validator = RequestValidator(settings.twilio_auth_token)
     form_ = await request.form()
 
-    if not validator.validate(  # pyright: ignore [reportUnknownMemberType]
+    if not validator.validate(
         str(request.url), form_, request.headers.get("X-Twilio-Signature", "")
     ):
         raise HTTPException(status_code=400, detail="Error in Twilio Signature")
@@ -101,21 +99,19 @@ def images_page(
     if prompt is None:
         raise HTTPException(status_code=404, detail="Unable to find prompt")
 
-    if not db.get_submission_status(
-        user_hash, prompt.id  # pyright: ignore [reportArgumentType]
-    ):
+    if not db.get_submission_status(user_hash, prompt.id):
         raise HTTPException(status_code=401, detail="No submission for this prompt")
 
-    pics = db.get_pics_by_prompt(prompt.id)  # pyright: ignore [reportArgumentType]
+    pics = db.get_pics_by_prompt(prompt.id)
 
     pics = [vars(pic) for pic in pics]
     for pic in pics:
         pic["click_url"] = pic["url"]
 
-    date_str: str = prompt.date.strftime("%b %-d, %Y")  # pyright: ignore [reportAny]
+    date_str: str = prompt.date.strftime("%b %-d, %Y")
 
     og = {"display": False}
-    winner = db.get_winner_by_prompt(prompt.id)  # pyright: ignore [reportArgumentType]
+    winner = db.get_winner_by_prompt(prompt.id)
     if winner is not None:
         og["display"] = True
         og["url"] = winner.url
@@ -132,7 +128,7 @@ def history_page(user_hash: str):
     pics = db.get_pics_by_hash(user_hash)
     html_list: list[str] = []
     for pic in pics:
-        prompt = db.get_prompt(pic.prompt)  # pyright: ignore [reportArgumentType]
+        prompt = db.get_prompt(pic.prompt)
         assert prompt is not None
         url = BASE_URL + "{}?n={}".format(user_hash, prompt.id)
         html_list.append('<li><a href="{}">{}</a></li>'.format(url, prompt.prompt))
@@ -187,12 +183,12 @@ def winner_admin_page(
     if prompt is None:
         raise HTTPException(status_code=404, detail="Unable to find prompt")
 
-    pics = db.get_pics_by_prompt(prompt.id)  # pyright: ignore [reportArgumentType]
+    pics = db.get_pics_by_prompt(prompt.id)
     pics = [vars(pic) for pic in pics]
     for pic in pics:
         pic["click_url"] = BASE_URL + "win/{}".format(pic["id"])
 
-    date_str: str = prompt.date.strftime("%b %-d, %Y")  # pyright: ignore [reportAny]
+    date_str: str = prompt.date.strftime("%b %-d, %Y")
 
     return templates.TemplateResponse(
         request=request,

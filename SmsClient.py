@@ -22,7 +22,7 @@ class SmsClient(Client):
 
     @override
     def send_message(self, to: str, text: str) -> None:
-        self.twilio_client.messages.create(  # pyright: ignore [reportUnknownMemberType]
+        self.twilio_client.messages.create(
             to=to, from_=settings.twilio_phone_number, body=text
         )
 

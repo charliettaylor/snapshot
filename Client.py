@@ -65,7 +65,7 @@ class Client(ABC):
 
     def reg_state_0(self, from_: str, text: str) -> None:
         if contains(text, START_KEYWORDS):
-            _ = self.db.update_reg(from_, 1)
+            self.db.update_reg(from_, 1)
             self.send_message(from_, ENTER_USERNAME)
         else:
             self.send_message(from_, HOW_TO_START)
@@ -75,7 +75,7 @@ class Client(ABC):
             self.send_message(from_, BAD_USERNAME)
             return
 
-        _ = self.db.update_reg(from_, 2, text)
+        self.db.update_reg(from_, 2, text)
         self.send_message(from_, CONFIRM_USERNAME.format(text))
 
     def reg_state_2(self, from_: str, text: str, reg: Registration) -> None:

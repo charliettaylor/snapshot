@@ -25,7 +25,7 @@ def get_db() -> Generator[Session]:
 
 
 class Database:
-    def __init__(self):
+    def __init__(self) -> None:
         db = next(get_db(), None)
         if db is None:
             raise Exception("Could not connect to database")
@@ -86,9 +86,9 @@ class Database:
         if db_reg is None:
             return None
 
-        db_reg.state = state  # pyright: ignore [reportAttributeAccessIssue]
+        db_reg.state = state
         if username is not None:
-            db_reg.username = username  # pyright: ignore [reportAttributeAccessIssue]
+            db_reg.username = username
         self.db.commit()
 
         return db_reg
@@ -162,6 +162,6 @@ class Database:
         if pic is None:
             return None
 
-        pic.winner = not pic.winner  # pyright: ignore [reportAttributeAccessIssue]
+        pic.winner = not pic.winner
         self.db.commit()
         return pic

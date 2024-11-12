@@ -24,7 +24,7 @@ class TextTestClient(Client):
 
 
 if __name__ == "__main__":
-    client = TextTestClient()
+    client = TextTestClient(settings)
 
     while True:
         text = input()

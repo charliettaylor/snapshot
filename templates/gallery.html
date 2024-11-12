@@ -29,7 +29,7 @@
         {% if pic.winner %}
         <li>
             <a href="{{pic.click_url}}">
-                <img src="{{pic.url}}" class="winner" />
+                <img src="{{pic.url}}" class="winner" loading="lazy" fetchPriority="high" />
             </a>
             <div class="pic-text">
                 <span>@{{pic.user}}</span>
@@ -39,7 +39,7 @@
         {% else %}
         <li>
             <a href="{{pic.click_url}}">
-                <img src="{{pic.url}}" />
+                <img src="{{pic.url}}" loading="lazy" fetchPriority="{{"high" if loop.index < 5 else "low"}}" />
             </a>
             <div class="pic-text">
                 <span>@{{pic.user}}</span>

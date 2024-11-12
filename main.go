@@ -3,9 +3,10 @@ package main
 import (
 	"net/http"
 	"os"
+	"slices"
 	"strings"
 
-	"snapshot/db"
+	"snapshot/database"
 	"snapshot/sms"
 
 	"github.com/charmbracelet/log"
@@ -27,10 +28,11 @@ func main() {
 	}
 
 	dbName := os.Getenv("db_name")
-	db := db.Open(dbName)
-	defer db.Close()
+	db := database.Open(dbName)
 
-	smsClient := sms.NewClient()
+	smsClient := sms.NewClient(db)
+
+	betaQueue := map[string]bool{}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
@@ -53,9 +55,35 @@ func main() {
 		mediaUrl := r.Form.Get("MediaUrl0")
 		if strings.Contains(contentType, "image") && mediaUrl != "" {
 			smsClient.HandleImage(from, contentType, mediaUrl)
-		} else {
-			smsClient.HandleMessage(from, body)
+			return
 		}
+
+		betaCode := os.Getenv("beta_code")
+		environment := os.Getenv("environment")
+		betaAllowlist := strings.Split(os.Getenv("beta_allowlist"), ",")
+
+		if body == betaCode {
+			betaQueue[from] = true
+			return
+		}
+
+		if strings.Contains(body, betaCode) {
+			body = body[len(betaCode)+1:]
+			betaQueue[from] = true
+		}
+
+		if betaQueue[from] {
+			if !slices.Contains(betaAllowlist, from) {
+				http.Error(w, "Not allowlisted for Beta env", 401)
+			}
+			if environment == "PROD" {
+				http.Error(w, "Beta code detected", 501)
+				delete(betaQueue, from)
+				return
+			}
+		}
+
+		smsClient.HandleMessage(from, body)
 	})
 
 	log.Info("Listening on", "port", port)

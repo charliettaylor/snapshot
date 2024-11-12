@@ -1,9 +1,0 @@
-pydantic
-pydantic_settings
-twilio
-twilio-stubs
-sqlalchemy
-fastapi[standard]
-black
-isort
-pytest

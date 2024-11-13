@@ -2,89 +2,36 @@ package main
 
 import (
 	"net/http"
-	"os"
-	"slices"
-	"strings"
 
+	"snapshot/api"
+	"snapshot/config"
 	"snapshot/database"
-	"snapshot/sms"
+	"snapshot/msg"
 
 	"github.com/charmbracelet/log"
-	"github.com/joho/godotenv"
 )
 
 const (
-	port = ":8080"
+	ServiceName = "Snapshot"
+	port        = ":8080"
 )
 
 func main() {
 
-	log.Info("Starting Snapshot service")
+	log.SetReportCaller(true)
+	log.Infof("Starting %s", ServiceName)
 
 	// Load .env environment variables
-	err := godotenv.Load()
+	err := config.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	dbName := os.Getenv("db_name")
-	db := database.Open(dbName)
+	db := database.Open(config.DbName)
 
-	smsClient := sms.NewClient(db)
+	smsClient := msg.NewSmsClient(db)
 
-	betaQueue := map[string]bool{}
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./static/index.html")
-	})
-
-	http.HandleFunc("/sms", func(w http.ResponseWriter, r *http.Request) {
-
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, "Unable to parse request parameters", 400)
-		}
-
-		if !smsClient.Validate(r) {
-			http.Error(w, "Failed to validate Twilio signature", 400)
-		}
-
-		from := r.Form.Get("From")
-		body := r.Form.Get("Body")
-		contentType := r.Form.Get("MediaContentType0")
-		mediaUrl := r.Form.Get("MediaUrl0")
-		if strings.Contains(contentType, "image") && mediaUrl != "" {
-			smsClient.HandleImage(from, contentType, mediaUrl)
-			return
-		}
-
-		betaCode := os.Getenv("beta_code")
-		environment := os.Getenv("environment")
-		betaAllowlist := strings.Split(os.Getenv("beta_allowlist"), ",")
-
-		if body == betaCode {
-			betaQueue[from] = true
-			return
-		}
-
-		if strings.Contains(body, betaCode) {
-			body = body[len(betaCode)+1:]
-			betaQueue[from] = true
-		}
-
-		if betaQueue[from] {
-			if !slices.Contains(betaAllowlist, from) {
-				http.Error(w, "Not allowlisted for Beta env", 401)
-			}
-			if environment == "PROD" {
-				http.Error(w, "Beta code detected", 501)
-				delete(betaQueue, from)
-				return
-			}
-		}
-
-		smsClient.HandleMessage(from, body)
-	})
+	api.RegisterEndpoints(smsClient)
 
 	log.Info("Listening on", "port", port)
 	log.Fatal(http.ListenAndServe(port, nil))

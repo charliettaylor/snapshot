@@ -1,24 +1,22 @@
-package sms
+package msg
 
 import (
 	"encoding/json"
 	"net/http"
-	"os"
-	"snapshot/database"
-	"strings"
 
 	"github.com/charmbracelet/log"
 	"github.com/twilio/twilio-go"
 	twilioClient "github.com/twilio/twilio-go/client"
 	twilioApi "github.com/twilio/twilio-go/rest/api/v2010"
 	"gorm.io/gorm"
+
+	"snapshot/config"
 )
 
-type Client struct {
+type SmsClient struct {
 	twilioClient     *twilio.RestClient
 	Account          Account
 	requestValidator twilioClient.RequestValidator
-	db               *gorm.DB
 }
 
 type Account struct {
@@ -27,30 +25,28 @@ type Account struct {
 	PhoneNumber string
 }
 
-func NewClient(db *gorm.DB) *Client {
-	accountSid := os.Getenv("twilio_account_sid")
-	authToken := os.Getenv("twilio_auth_token")
-	phoneNumber := os.Getenv("twilio_phone_number")
+func NewSmsClient(db *gorm.DB) *SmsClient {
 
 	account := Account{
-		accountSid, authToken, phoneNumber,
+		config.Twilio.AccountSid,
+		config.Twilio.AuthToken,
+		config.Twilio.PhoneNumber,
 	}
 
 	client := twilio.NewRestClientWithParams(twilio.ClientParams{
-		Username: accountSid,
-		Password: authToken,
+		Username: account.AccountSid,
+		Password: account.AuthToken,
 	})
 
-	return &Client{
+	return &SmsClient{
 		client,
 		account,
-		twilioClient.NewRequestValidator(authToken),
-		db,
+		twilioClient.NewRequestValidator(account.AuthToken),
 	}
 }
 
-func (c *Client) SendMessage(to string, text string) {
-	log.Info("SendMessage")
+func (c *SmsClient) SendMessage(to string, text string) {
+	log.Info("SmsClient SendMessage", "to", to, "text", text)
 
 	params := &twilioApi.CreateMessageParams{}
 	params.SetTo(to)
@@ -66,7 +62,7 @@ func (c *Client) SendMessage(to string, text string) {
 	}
 }
 
-func (c *Client) Validate(req *http.Request) bool {
+func (c *SmsClient) Validate(req *http.Request) bool {
 	header := req.Header.Get("X-Twilio-Signature")
 
 	params := make(map[string]string)
@@ -78,23 +74,11 @@ func (c *Client) Validate(req *http.Request) bool {
 	return c.requestValidator.Validate(req.URL.String(), params, header)
 }
 
-func (c *Client) HandleMessage(from string, text string) {
+func (c *SmsClient) ReceiveText(from string, text string) {
 	log.Info("HandleMessage", "from", from, "text", text)
-
-	adminPass := os.Getenv("admin_pass")
-	if strings.Contains(text, adminPass) {
-		c.handleAdminMessage(from, text)
-		return
-	}
-
-	var reg database.Registration
-	c.db.Where(database.Registration{Phone: &from}).FirstOrCreate(&reg)
+	HandleText(from, text)
 }
 
-func (c *Client) HandleImage(from string, contentType string, mediaUrl string) {
+func (c *SmsClient) ReceiveImage(from string, contentType string, mediaUrl string) {
 	log.Info("HandleImage", "from", from, "mediaUrl", mediaUrl)
-}
-
-func (c *Client) handleAdminMessage(from string, text string) {
-	log.Info("HandleAdminMessage", "from", from, "text", text)
 }

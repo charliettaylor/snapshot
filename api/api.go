@@ -17,22 +17,28 @@ const (
 	acceptedContentType = "image"
 )
 
+var betaQueue map[string]bool
+
 func RegisterEndpoints(msgClient msg.MsgClient) {
-	betaQueue := map[string]bool{}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./static/index.html")
-	})
+	http.HandleFunc("/", handleIndex)
+	http.HandleFunc("/sms", handleSms(msgClient))
+}
 
-	http.HandleFunc("/sms", func(w http.ResponseWriter, r *http.Request) {
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "../static/index.html")
+}
+
+func handleSms(msgClient msg.MsgClient) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, "Unable to parse request parameters", 400)
+			http.Error(w, "Unable to parse request parameters", http.StatusBadRequest)
 		}
 
 		if !msgClient.Validate(r) {
-			http.Error(w, "Failed to validate request signature", 400)
+			http.Error(w, "Failed to validate request signature", http.StatusUnauthorized)
 		}
 
 		from := r.Form.Get(formFrom)
@@ -66,5 +72,5 @@ func RegisterEndpoints(msgClient msg.MsgClient) {
 		}
 
 		msgClient.ReceiveText(from, body)
-	})
+	}
 }

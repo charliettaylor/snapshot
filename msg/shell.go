@@ -4,12 +4,11 @@ import (
 	"net/http"
 
 	"github.com/charmbracelet/log"
-	"gorm.io/gorm"
 )
 
 type ShellClient struct{}
 
-func NewTestClient(db *gorm.DB) *ShellClient {
+func NewShellClient() *ShellClient {
 	return &ShellClient{}
 }
 

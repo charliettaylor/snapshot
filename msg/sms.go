@@ -8,7 +8,6 @@ import (
 	"github.com/twilio/twilio-go"
 	twilioClient "github.com/twilio/twilio-go/client"
 	twilioApi "github.com/twilio/twilio-go/rest/api/v2010"
-	"gorm.io/gorm"
 
 	"snapshot/config"
 )
@@ -25,7 +24,7 @@ type Account struct {
 	PhoneNumber string
 }
 
-func NewSmsClient(db *gorm.DB) *SmsClient {
+func NewSmsClient() *SmsClient {
 
 	account := Account{
 		config.Twilio.AccountSid,

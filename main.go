@@ -27,9 +27,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db := database.Open(config.DbName)
+	database.Open(config.DbName)
 
-	smsClient := msg.NewSmsClient(db)
+	smsClient := msg.NewSmsClient()
 
 	api.RegisterEndpoints(smsClient)
 

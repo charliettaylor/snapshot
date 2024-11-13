@@ -3,8 +3,9 @@ package api
 import (
 	"net/http"
 	"net/http/httptest"
-	"snapshot/msg"
 	"testing"
+
+	"snapshot/msg"
 )
 
 func TestIndex(t *testing.T) {
@@ -18,12 +19,12 @@ func TestIndex(t *testing.T) {
 	}
 }
 
-// not working yet
 func TestSmsUnverified(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/sms", nil)
 	w := httptest.NewRecorder()
 
-	handleSms(msg.NewShellClient())(w, req)
+	handler := handleSms(msg.NewShellClient())
+	handler(w, req)
 
 	if w.Code != http.StatusUnauthorized {
 		t.Fatalf("Expected unathorized %d", w.Code)

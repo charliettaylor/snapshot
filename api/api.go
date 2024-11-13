@@ -30,6 +30,11 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSms(msgClient msg.MsgClient) http.HandlerFunc {
+
+	if betaQueue == nil {
+		betaQueue = make(map[string]bool)
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		err := r.ParseForm()

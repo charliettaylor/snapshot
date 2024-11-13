@@ -24,6 +24,10 @@ func (c *ShellClient) ReceiveImage(from string, contentType string, mediaUrl str
 	log.Info("ReceiveImage", "from", from, "mediaUrl", mediaUrl)
 }
 
-func (c *ShellClient) Validate(*http.Request) bool {
+func (c *ShellClient) Validate(req *http.Request) bool {
+	header := req.Header.Get("X-Shell-Signature")
+	if header == "" {
+		return false
+	}
 	return true
 }

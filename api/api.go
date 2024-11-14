@@ -1,11 +1,14 @@
 package api
 
 import (
+	"html/template"
 	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 
 	"snapshot/config"
+	"snapshot/database"
 	"snapshot/msg"
 )
 
@@ -77,5 +80,53 @@ func handleSms(msgClient msg.MsgClient) http.HandlerFunc {
 		}
 
 		msgClient.ReceiveText(from, body)
+	}
+}
+
+func viewPage() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		hash := strings.TrimPrefix(r.URL.Path, "/v/")
+		n := r.URL.Query().Get("n")
+		db := database.GetDb()
+
+		var prompt database.Prompt
+		if n == "" {
+			if err := db.Order("id desc").First(&prompt).Error; err != nil {
+				// shit tstrconv.)Itoa(
+			}
+			n = strconv.FormatInt(int64(int(prompt.ID)), 10)
+		}
+
+		if err := db.First(&prompt, n).Error; err != nil {
+			// shit the bed
+		}
+
+		var user database.User
+		if err := db.First(&user, "hash = ?", hash).Error; err != nil {
+			// shit the bed
+		}
+
+		var pics []database.Pic
+		if err := db.Where("prompt = ?", n).Find(&pics); err != nil {
+			// shit the bed
+		}
+
+		og := map[string]interface{} { "display": false }
+
+		data := map[string]interface{} {
+			"pics": pics,
+			"prompt": prompt.Prompt,
+			"date": prompt.Date.Format("%b %d, %Y"),
+			"og": og,
+		}
+
+		tmp, err := template.ParseFiles("gallery.html")
+		
+		if err != nil {
+			// shit the bed	
+		}
+
+		tmp.Execute(w, data)
 	}
 }

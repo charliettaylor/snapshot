@@ -13,6 +13,8 @@ type User struct {
 	Phone    string
 	Hash     string
 	Active   bool
+
+	Pics []Pic
 }
 
 type Registration struct {
@@ -27,6 +29,8 @@ type Prompt struct {
 	gorm.Model
 	Prompt string
 	Date   time.Time
+
+	Pics []Pic
 }
 
 // Should update Prompt -> PromptId
@@ -35,4 +39,6 @@ type Pic struct {
 	Url      string
 	Prompt   int
 	Username string
+
+	User User
 }

@@ -6,12 +6,13 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+var db *gorm.DB = nil
 
 func GetDb() *gorm.DB {
 	if db == nil {
-		log.Fatal("Database is opened.")
+		return Open("snapshot.db")
 	}
+
 	return db
 }
 

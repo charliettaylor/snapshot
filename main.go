@@ -18,7 +18,7 @@ const (
 
 func main() {
 
-	log.SetReportCaller(true)
+	// log.SetReportCaller(true)
 	log.Infof("Starting %s", ServiceName)
 
 	// Load .env environment variables
@@ -32,6 +32,11 @@ func main() {
 	smsClient := msg.NewSmsClient()
 
 	api.RegisterEndpoints(smsClient)
+
+	if config.IsShell {
+		log.Info("Running in shell mode")
+		ShellInput()
+	}
 
 	log.Info("Listening on", "port", port)
 	log.Fatal(http.ListenAndServe(port, nil))

@@ -8,7 +8,7 @@ import (
 
 // Should update UserName -> Name
 type User struct {
-	// gorm.Model
+	gorm.Model
 	Username string `gorm:"primaryKey"`
 	Phone    string
 	Hash     string

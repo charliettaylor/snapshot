@@ -17,16 +17,23 @@ const (
 	BETA Environment = "BETA"
 	DEV  Environment = "DEV"
 
-	envName               = "environment"
-	twilioAccountSidName  = "twilio_account_sid"
-	twilioAuthTokenName   = "twilio_auth_token"
-	twilioPhoneNumberName = "twilio_phone_number"
-	dbFileName            = "db_name"
-	hashSecretName        = "hash_secret"
-	adminPassName         = "admin_pass"
-	betaCodeName          = "beta_code"
-	betaAllowlistName     = "beta_allowlist"
+	// Environment variables in .env
+	envKey               = "environment"
+	twilioAccountSidKey  = "twilio_account_sid"
+	twilioAuthTokenKey   = "twilio_auth_token"
+	twilioPhoneNumberKey = "twilio_phone_number"
+	dbNameKey            = "db_name"
+	hashSecretKey        = "hash_secret"
+	adminPassKey         = "admin_pass"
+	betaCodeKey          = "beta_code"
+	betaAllowlistKey     = "beta_allowlist"
 
+	// Other environment variables
+	debugKey      = "DEBUG"
+	shellKey      = "SHELL"
+	inMemoryDbKey = "IN_MEMORY_DB"
+
+	// format strings
 	missingErr        = "Missing environment variable: `%s`. "
 	missingInvalidErr = "Missing or invalid environment variable: `%s`. "
 )
@@ -45,6 +52,10 @@ var AdminPass string
 var BetaCode string
 var BetaAllowlist []string
 
+var IsDebug bool
+var IsInMemoryDb bool
+var IsShell bool
+
 func Load() error {
 	log.Info("Loading environment variables from .env")
 
@@ -53,7 +64,19 @@ func Load() error {
 		log.Fatal(err)
 	}
 
-	environ := strings.ToUpper(os.Getenv(envName))
+	IsDebug = os.Getenv(debugKey) == "1"
+	if IsDebug {
+		log.SetLevel(log.DebugLevel)
+	}
+	log.Debug("", debugKey, IsDebug)
+
+	IsShell = os.Getenv(shellKey) == "1"
+	log.Debug("", shellKey, IsShell)
+
+	IsInMemoryDb = os.Getenv(inMemoryDbKey) == "1"
+	log.Debug("", inMemoryDbKey, IsInMemoryDb)
+
+	environ := strings.ToUpper(os.Getenv(envKey))
 	if environ == string(PROD) {
 		Env = PROD
 	} else if environ == string(BETA) {
@@ -61,36 +84,42 @@ func Load() error {
 	} else if environ == string(DEV) {
 		Env = DEV
 	} else {
-		return errors.New(fmt.Sprintf(missingInvalidErr, envName))
+		return errors.New(fmt.Sprintf(missingInvalidErr, envKey))
 	}
+	log.Debug("", envKey, Env)
 
 	Twilio = TwilioConfig{
-		os.Getenv(twilioAccountSidName),
-		os.Getenv(twilioAuthTokenName),
-		os.Getenv(twilioPhoneNumberName),
+		os.Getenv(twilioAccountSidKey),
+		os.Getenv(twilioAuthTokenKey),
+		os.Getenv(twilioPhoneNumberKey),
 	}
 
-	DbName = os.Getenv(dbFileName)
+	DbName = os.Getenv(dbNameKey)
 	if len(DbName) < 4 || DbName[len(DbName)-3:] != ".db" {
-		return errors.New(fmt.Sprintf(missingInvalidErr, dbFileName) + "Format: `<name>.db`")
+		return errors.New(fmt.Sprintf(missingInvalidErr, dbNameKey) + "Format: `<name>.db`")
 	}
+	log.Debug("", dbNameKey, DbName)
 
-	HashSecret = os.Getenv(hashSecretName)
+	HashSecret = os.Getenv(hashSecretKey)
 	if HashSecret == "" {
-		return errors.New(fmt.Sprintf(missingErr, hashSecretName))
+		return errors.New(fmt.Sprintf(missingErr, hashSecretKey))
 	}
+	log.Debug("", hashSecretKey, "set")
 
-	AdminPass = os.Getenv(adminPassName)
+	AdminPass = os.Getenv(adminPassKey)
 	if len(AdminPass) < 5 {
-		return errors.New(fmt.Sprintf(missingInvalidErr, adminPassName) + "Minimum length: 5")
+		return errors.New(fmt.Sprintf(missingInvalidErr, adminPassKey) + "Minimum length: 5")
 	}
+	log.Debug("", adminPassKey, "set")
 
-	BetaCode = os.Getenv(betaCodeName)
+	BetaCode = os.Getenv(betaCodeKey)
 	if len(BetaCode) < 5 {
-		return errors.New(fmt.Sprintf(missingInvalidErr, betaCodeName) + "Minimum length: 5")
+		return errors.New(fmt.Sprintf(missingInvalidErr, betaCodeKey) + "Minimum length: 5")
 	}
+	log.Debug("", betaCodeKey, BetaCode)
 
-	BetaAllowlist = strings.Split(os.Getenv(betaAllowlistName), ",")
+	BetaAllowlist = strings.Split(os.Getenv(betaAllowlistKey), ",")
+	log.Debug("", betaAllowlistKey, BetaAllowlist)
 
 	log.Info("Successfully loaded environment variables")
 	return nil

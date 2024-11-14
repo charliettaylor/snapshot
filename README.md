@@ -8,9 +8,7 @@ weekly prompt. Users can submit a photo for the prompt by sending an image over 
 Once a user has submitted a response, they will receive a link to a webpage to
 view all of the photos submitted by users.
 
-API built using FastAPI.
-Uses Twilio api for the sms interface
-SQLAlchemy as an ORM for Sqlite3.
+Uses the Twilio API, written in Go
 
 ### Development
 
@@ -33,19 +31,30 @@ beta_code=
 beta_allowlist=
 ```
 
+Format using gofumpt
+```bash
+go fmt
+```
+
 Run the tests
 ```bash
-pytest
+go test ./...
 ```
 
-Start the server
+Run the server to debug
 ```bash
-fastapi run main.py
+go run .
 ```
 
-Format code before new changes
+Run the server with some debug environment variables
 ```bash
-black . && isort .
+DEBUG=1 SHELL=1 IN_MEMORY_DB=1 go run .
+```
+
+Build the server (prod)
+```bash
+go build
+./snapshot
 ```
 
 ### Beta environment

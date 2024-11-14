@@ -17,7 +17,7 @@ func (c *ShellClient) SendMessage(to string, text string) {
 }
 
 func (c *ShellClient) ReceiveText(from string, text string) {
-	log.Info("ReceiveText", "from", from, "mediaUrl", text)
+	log.Info("ReceiveText", "from", from, "text", text)
 }
 
 func (c *ShellClient) ReceiveImage(from string, contentType string, mediaUrl string) {

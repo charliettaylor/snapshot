@@ -16,7 +16,7 @@ var db *gorm.DB = nil
 
 func GetDb() *gorm.DB {
 	if db == nil {
-		return Open("snapshot.db")
+		return Open(config.DbName)
 	}
 
 	return db

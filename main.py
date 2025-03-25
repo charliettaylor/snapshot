@@ -1,6 +1,11 @@
+import json
 import logging
+import random
+from contextlib import asynccontextmanager
 from typing import Annotated
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from fastapi import Cookie, FastAPI, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -25,7 +30,40 @@ logger = logging.getLogger(__name__)
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+
+def send_scheduled_prompts():
+    # get list of prompts
+    with open("./prompts.json", "r") as f:
+        prompts = json.loads(f.read())
+
+    # choose a random one that hasn't been sent yet
+    previous = [x.prompt for x in db.get_all_prompts()]
+    prompt = random.choice([x for x in prompts if x not in previous])
+
+    # create the prompt db row
+    db.create_prompt(prompt)
+
+    # send out to all user
+    twilio_client.send_prompts(prompt)
+
+    # log
+    logger.info(f"Sent out prompt {prompt}")
+
+
+scheduler = BackgroundScheduler()
+# 0 12 14 * * = 12pm on the 14th of every month
+trigger = CronTrigger(minute=0, hour=12, day=14)
+scheduler.add_job(send_scheduled_prompts, trigger)
+scheduler.start()
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    yield
+    scheduler.shutdown()
+
+
+app = FastAPI(lifespan=lifespan)
 twilio_client = SmsClient(settings)
 templates = Jinja2Templates(directory="templates")
 db = Database()

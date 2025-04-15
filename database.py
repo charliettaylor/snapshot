@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 import util
 from config import settings
-from models import *
+from models import Pic, Prompt, Registration, User
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./" + settings.db_name
 
@@ -130,11 +130,7 @@ class Database:
         )
 
     def get_winner_by_prompt(self, prompt_id: int) -> Pic | None:
-        return (
-            self.db.query(Pic)
-            .filter(Pic.prompt == prompt_id, Pic.winner == True)
-            .first()
-        )
+        return self.db.query(Pic).filter(Pic.prompt == prompt_id, Pic.winner).first()
 
     def get_submission_status(self, user_hash: str, prompt_id: int) -> bool:
         user = self.get_user_by_hash(user_hash)

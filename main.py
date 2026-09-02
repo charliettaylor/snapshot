@@ -231,6 +231,15 @@ async def create_prompt(
 
     return RedirectResponse(url="/admin", status_code=303)
 
+@app.post("/save/{prompt_id}")
+async def download_prompt_photos(prompt_id: int, password: Annotated[str | None, Cookie()] = None):
+    if not is_logged_in(password):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    # find prompt
+    prompt = db.get_prompt(prompt_id)
+    # query related submissions
+    # download to archive folder
 
 def is_logged_in(password: str | None) -> bool:
     return password is not None and password == settings.admin_pass
